@@ -26,13 +26,13 @@ export default function Sidebar() {
         <div className="sidebarMenu">
           <h3 className="sidebarTitle">Quick Menu</h3>
           <ul className="sidebarList">
-            <Link to="/users" className="link">
+            <Link to="/drivers" className="link">
               <li className="sidebarListItem">
                 <PermIdentity className="sidebarIcon" />
                 Drivers
               </li>
             </Link>
-            <Link to="/products" className="link">
+            <Link to="/riders" className="link">
               <li className="sidebarListItem">
                 <PermIdentity className="sidebarIcon" />
                 Riders

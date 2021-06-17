@@ -26,6 +26,13 @@
   font-size: 30px;
   color: rgb(154, 213, 236);
   cursor: pointer;
+  padding-left: 10px;
+}
+
+.topLeft {
+  display: flex;
+  align-items: center;
+  padding: 5px;
 }
 
 .topRight {

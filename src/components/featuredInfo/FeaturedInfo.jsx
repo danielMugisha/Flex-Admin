@@ -1,13 +1,18 @@
 import "./featuredInfo.css";
 import { ArrowDownward, ArrowUpward } from "@material-ui/icons";
+import { useSelector } from "react-redux";
 
 export default function FeaturedInfo() {
+  const totalRides = useSelector((state) => state.allRiders.totalRides);
+  const totalRiders = useSelector((state) => state.allRiders.totalRiders);
+  const totalDrivers = useSelector((state) => state.allDrivers.totalDrivers);
+  const totalRequests = useSelector((state) => state.allRiders.totalRequests);
   return (
     <div className="featured">
       <div className="featuredItem">
         <span className="featuredTitle">Drivers</span>
         <div className="featuredMoneyContainer">
-          <span className="featuredMoney">15</span>
+          <span className="featuredMoney">{totalDrivers}</span>
           <span className="featuredMoneyRate">
             3 <ArrowUpward className="featuredIcon positive" />
           </span>
@@ -17,7 +22,7 @@ export default function FeaturedInfo() {
       <div className="featuredItem">
         <span className="featuredTitle">Riders</span>
         <div className="featuredMoneyContainer">
-          <span className="featuredMoney">80</span>
+          <span className="featuredMoney">{totalRiders}</span>
           <span className="featuredMoneyRate">
             6 <ArrowUpward className="featuredIcon positive" />
           </span>
@@ -25,9 +30,9 @@ export default function FeaturedInfo() {
         <span className="featuredSub">Last 2 hours</span>
       </div>
       <div className="featuredItem">
-        <span className="featuredTitle">Trips</span>
+        <span className="featuredTitle">Requests</span>
         <div className="featuredMoneyContainer">
-          <span className="featuredMoney">134</span>
+          <span className="featuredMoney">{totalRequests}</span>
           <span className="featuredMoneyRate">
             +24 <ArrowUpward className="featuredIcon" />
           </span>
@@ -35,9 +40,9 @@ export default function FeaturedInfo() {
         <span className="featuredSub">Last 2 hours</span>
       </div>
       <div className="featuredItem">
-        <span className="featuredTitle">Sales</span>
+        <span className="featuredTitle">Rides</span>
         <div className="featuredMoneyContainer">
-          <span className="featuredMoney">$1,347</span>
+          <span className="featuredMoney">{totalRides}</span>
           <span className="featuredMoneyRate">
             +357 <ArrowUpward className="featuredIcon" />
           </span>

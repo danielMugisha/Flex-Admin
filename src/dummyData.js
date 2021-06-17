@@ -2,34 +2,9 @@ import axios from "axios";
 const API_URL = "http://localhost:8080/api/drivers";
 const API_BASE_URL = "http://localhost:8080/";
 
-window.onload = () => {
-  console.log("hello");
-  getDrivers();
-};
-
-const getDrivers = async () => {
-  axios.get("http://localhost:8080/api/drivers").then(async (response) => {
-    console.log(response.data);
-    var drivers = [];
-    var count = 0;
-    await response.data.forEach((d) => {
-      var driver = {
-        id: count++,
-        username: `${d.lname}+" "+${d.fname}`,
-        avatar:
-          "https://images.pexels.com/photos/1152994/pexels-photo-1152994.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500",
-        email: d.email,
-        status: d.status,
-        rating: "5",
-      };
-      drivers.push(driver);
-    });
-    console.log(drivers);
-    return drivers;
-  });
-};
-
-export const serverDrivers = getDrivers;
+// window.onload = () => {
+//   getDrivers();
+// };
 
 export const driverData = [
   {
@@ -148,7 +123,7 @@ export const productData = [
   },
 ];
 
-export const drivers = [
+export const dummydrivers = [
   {
     id: 1,
     username: "Jon Snow",
@@ -222,6 +197,32 @@ export const drivers = [
     rating: "5",
   },
 ];
+
+// const getDrivers = async () => {
+//   var serverDrivers = [];
+//   const res = await axios.get(API_URL);
+//   console.log("response data", res);
+//   const data = res.data;
+//   console.log("data", data);
+//   var count = 1;
+//   data.forEach((d) => {
+//     var driver = {
+//       id: count++,
+//       username: d.lname + " " + d.fname,
+//       avatar:
+//         "https://images.pexels.com/photos/1152994/pexels-photo-1152994.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500",
+//       email: d.email,
+//       status: d.status,
+//       rating: "5",
+//     };
+//     serverDrivers.push(driver);
+//   });
+//   drivers = [...serverDrivers];
+//   console.log(drivers);
+//   return drivers;
+// };
+
+// export const serverData = drivers;
 
 export const productRows = [
   {
