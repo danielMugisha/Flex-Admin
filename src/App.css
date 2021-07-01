@@ -1,10 +1,18 @@
-.container{
-    display: flex;
-    margin-top: 10px;
+.container {
+	display: flex;
+	width: 100%;
+	margin-top: 10px;
 }
 
+.link {
+	text-decoration: none;
+	color: inherit;
+}
 
-.link{
-    text-decoration: none;
-    color: inherit;
+.sideMenu {
+	flex: 1;
+}
+
+.main {
+	flex: 4;
 }

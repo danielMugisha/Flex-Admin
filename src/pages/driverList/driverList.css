@@ -1,38 +1,35 @@
 .userList {
-  flex: 4;
+	height: 100vh;
 }
-
 .userListUser {
-  display: flex;
-  align-items: center;
-}
-.driversTitle {
+	display: flex;
+	align-items: center;
 }
 .userListImg {
-  display: flex;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  margin-right: 10px;
-  align-items: center;
-  justify-content: center;
-  font-size: x-large;
-  background-color: #0289b2;
-  color: rgb(154, 213, 236);
-  text-transform: uppercase;
+	display: flex;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	margin-right: 10px;
+	align-items: center;
+	justify-content: center;
+	font-size: x-large;
+	background-color: #0289b2;
+	color: rgb(154, 213, 236);
+	text-transform: uppercase;
 }
 
 .userListEdit {
-  border: none;
-  border-radius: 10px;
-  padding: 5px 10px;
-  background-color: #3bb077;
-  color: white;
-  cursor: pointer;
-  margin-right: 20px;
+	border: none;
+	border-radius: 10px;
+	padding: 5px 10px;
+	background-color: #3bb077;
+	color: white;
+	cursor: pointer;
+	margin-right: 20px;
 }
 
 .userListDelete {
-  color: red;
-  cursor: pointer;
+	color: red;
+	cursor: pointer;
 }

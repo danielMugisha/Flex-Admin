@@ -1,0 +1,71 @@
+.addPanel button {
+	flex: 1;
+	border: 1px solid gray;
+	border-radius: 0 5px 5px 0;
+	font-size: medium;
+	font-weight: 700;
+	color: rgb(70, 147, 211);
+	cursor: pointer;
+}
+
+.newUserForm {
+	display: block;
+	margin: auto 0;
+}
+.addPanel {
+	display: flex;
+}
+
+.catDisplay {
+	width: 60%;
+	margin-top: 10px;
+	border: 1px solid gray;
+	min-height: 150px;
+	border-radius: 5px;
+}
+
+.addPanel > input {
+	width: 80%;
+	height: 20px;
+	padding: 10px;
+	border: 1px solid gray;
+	border-radius: 5px 0 0 5px;
+	outline: none;
+}
+
+.newUserButton {
+	width: 200px;
+	border: none;
+	background-color: #0289b2;
+	color: white;
+	padding: 7px 10px;
+	font-weight: 600;
+	border-radius: 10px;
+	margin-top: 30px;
+	cursor: pointer;
+}
+
+.formWrapper {
+	display: flex;
+	justify-content: center;
+}
+.form {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	width: 60%;
+}
+.fileUploadField {
+	min-width: 400px;
+	border: 1px solid lightgray;
+	border-radius: 4px;
+	margin: 8px;
+	padding: 2px 8px;
+}
+
+.fileUploadField label {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	color: grey;
+}

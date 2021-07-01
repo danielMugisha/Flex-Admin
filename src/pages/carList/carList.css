@@ -1,4 +1,4 @@
-.userList {
+.carList {
 	height: 100vh;
 }
 
@@ -6,8 +6,7 @@
 	display: flex;
 	align-items: center;
 }
-.driversTitle {
-}
+
 .userListImg {
 	display: flex;
 	width: 32px;
@@ -35,4 +34,12 @@
 .userListDelete {
 	color: red;
 	cursor: pointer;
+}
+
+.carListButtons a {
+	text-decoration: none;
+}
+
+.carListButtons button {
+	background-color: #0289b2;
 }
