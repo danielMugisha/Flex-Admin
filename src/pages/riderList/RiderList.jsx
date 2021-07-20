@@ -1,13 +1,14 @@
 import "./riderList.css";
 import { DataGrid } from "@material-ui/data-grid";
 import { DeleteOutline } from "@material-ui/icons";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setRiders } from "../../store/actions/riderActions";
 
 const RiderList = () => {
+	const user = useSelector((state) => state.firebase.auth);
 	const data = useSelector((state) => state.allRiders.riders);
 
 	const handleDelete = (id) => {
@@ -71,6 +72,7 @@ const RiderList = () => {
 		},
 	];
 
+	if (!user.uid) return <Redirect to="login" />;
 	return (
 		<div className="userList">
 			<h1 className="driversTitle">Riders</h1>

@@ -37,13 +37,15 @@
 .topRight {
 	display: flex;
 	align-items: center;
-  padding-right: 10px;
+	padding-right: 10px;
 }
 
 .topbarIconContainer {
 	position: relative;
 	cursor: pointer;
-	color: #555;
+	font-size: 20px;
+	color: rgb(154, 213, 236);
+	margin: 0 4px;
 }
 
 .topIconBadge {

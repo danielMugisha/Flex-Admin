@@ -2,13 +2,14 @@ import "./carList.css";
 import { DataGrid } from "@material-ui/data-grid";
 import { DeleteOutline } from "@material-ui/icons";
 import { Button } from "@material-ui/core";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setDrivers } from "../../store/actions/driverActions";
 
 const CarList = () => {
+	const user = useSelector((state) => state.firebase.auth);
 	const data = useSelector((state) => state.allCars.cars);
 
 	const handleDelete = (id) => {
@@ -73,7 +74,7 @@ const CarList = () => {
 			sortable: false,
 		},
 	];
-
+	if (!user.uid) return <Redirect to="/login" />;
 	return (
 		<>
 			<div className="carList">

@@ -2,17 +2,19 @@ import "./carCategory.css";
 import { DataGrid } from "@material-ui/data-grid";
 import { DeleteOutline } from "@material-ui/icons";
 import { Button } from "@material-ui/core";
-import { Link } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setDrivers } from "../../store/actions/driverActions";
 
 const CarCategory = () => {
+	const user = useSelector((state) => state.firebase.auth);
+
 	const data = useSelector((state) => state.allCategories.categories);
 	console.log("datatttta", data);
 	// ADD CATEGORY START
-	const ADD_URL = "http://localhost:8080/api/car/category/add";
+	const ADD_URL = "https://flexgo-backend.herokuapp.com/api/car/category/add";
 	const [subCategories, setSubCategories] = useState([]);
 	const [name, setName] = useState("");
 	const [subCat, setSubCat] = useState("");
@@ -60,7 +62,8 @@ const CarCategory = () => {
 	// ADD CATEGORY END
 
 	// EDIT CATEGORY START
-	const UPDATE_URL = "http://localhost:8080/api/car/category/update";
+	const UPDATE_URL =
+		"https://flexgo-backend.herokuapp.com/api/car/category/update";
 
 	const [selectedCat, setSelectedCat] = useState(null);
 	const [selectedSubCats, setSelectedSubCats] = useState([]);
@@ -152,6 +155,7 @@ const CarCategory = () => {
 	const onCancel = (e) => {
 		document.getElementById("myForm").reset();
 	};
+	if (!user.uid) return <Redirect to="/login" />;
 	return (
 		<>
 			<h1>Categories</h1>

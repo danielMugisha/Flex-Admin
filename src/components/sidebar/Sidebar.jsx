@@ -14,12 +14,13 @@ import { setDrivers } from "../../store/actions/driverActions";
 import { setCategories } from "../../store/actions/categoryActions";
 import { setRiders } from "../../store/actions/riderActions";
 import { setCars } from "../../store/actions/carsActions";
+import { signOut } from "../../store/actions/authActions";
 
 export default function Sidebar() {
-	const DRIVERS_URL = "http://localhost:8080/api/drivers";
-	const CATS_URL = "http://localhost:8080/api/car/categories";
-	const CARS_URL = "http://localhost:8080/api/cars";
-	const RIDERS_URL = "http://localhost:8080/api/riders";
+	const DRIVERS_URL = "https://flexgo-backend.herokuapp.com/api/drivers";
+	const CATS_URL = "https://flexgo-backend.herokuapp.com/api/car/categories";
+	const CARS_URL = "https://flexgo-backend.herokuapp.com/api/cars";
+	const RIDERS_URL = "https://flexgo-backend.herokuapp.com/api/riders";
 
 	const dispatch = useDispatch();
 
@@ -49,6 +50,10 @@ export default function Sidebar() {
 			console.log(err);
 		});
 		dispatch(setCars(response.data));
+	};
+
+	const handleLogout = () => {
+		dispatch(signOut());
 	};
 
 	useEffect(() => {
@@ -111,6 +116,13 @@ export default function Sidebar() {
 								Manage Cars
 							</li>
 						</Link>
+					</ul>
+				</div>
+				<div className="sidebarMenu">
+					<ul className="sidebarList">
+						<li>
+							<a onClick={handleLogout}>Logout</a>
+						</li>
 					</ul>
 				</div>
 			</div>

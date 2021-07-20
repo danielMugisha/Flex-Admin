@@ -13,6 +13,7 @@ import "./newCar.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { Redirect } from "react-router";
 
 const useStyles = makeStyles((theme) => ({
 	formControl: {
@@ -33,9 +34,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const serviceCategories = ["PICK ME UP", "VIP", "CARGO"];
-const URL = "http://localhost:8080/api/car/add";
+const URL = "https://flexgo-backend.herokuapp.com/api/car/add";
 
 export default function NewCar() {
+	const user = useSelector((state) => state.firebase.auth);
+
 	const drivers = useSelector((state) => state.allDrivers.drivers);
 	const categories = useSelector((state) => state.allCategories.categories);
 	const classes = useStyles();
@@ -113,6 +116,7 @@ export default function NewCar() {
 		if (subs.length > 0) setSubCategories(subs[0].subCategories);
 	}, [car.category]);
 
+	if (!user.uid) return <Redirect to="login" />;
 	return (
 		<div className="newUser">
 			<h1 className="newUserTitle">Add New Car</h1>

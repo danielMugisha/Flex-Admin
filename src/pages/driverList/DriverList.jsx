@@ -1,13 +1,14 @@
 import "./driverList.css";
 import { DataGrid } from "@material-ui/data-grid";
 import { DeleteOutline } from "@material-ui/icons";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setDrivers } from "../../store/actions/driverActions";
 
 const DriverList = () => {
+	const user = useSelector((state) => state.firebase.auth);
 	const data = useSelector((state) => state.allDrivers.drivers);
 
 	const handleDelete = (id) => {
@@ -52,7 +53,7 @@ const DriverList = () => {
 			renderCell: (params) => {
 				return (
 					<>
-						<Link to={"/user/" + params.row.id}>
+						<Link to={"/driver/" + params.row.id}>
 							<button className="userListEdit">Edit</button>
 						</Link>
 						<DeleteOutline
@@ -66,6 +67,7 @@ const DriverList = () => {
 		},
 	];
 
+	if (!user.uid) return <Redirect to="login" />;
 	return (
 		<div className="userList">
 			<h1 className="driversTitle">Drivers</h1>
