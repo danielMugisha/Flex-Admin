@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./mapContainer.css";
 import {
 	GoogleMap,
@@ -32,8 +32,8 @@ import axios from "axios";
 
 //const libraries = ["places"];
 const mapContainerStyle = {
-	width: "60%",
-	height: "400px",
+	width: "100%",
+	height: "600px",
 };
 const center = { lat: -1.9397, lng: 30.0557 };
 const options = {
@@ -69,15 +69,18 @@ function MapContainer() {
 	const [pickLng, setPickLng] = useState(0);
 
 	const pickUpLocation = { latitude: pickLat, longitude: pickLng };
-	const URL =
-		"https://cors-anywhere.herokuapp.com/https://flexgo-backend.herokuapp.com/api/rideRequest";
+	const URL = "https://flexgo-backend.herokuapp.com/api/rideRequest";
+	const [orderedDrivers, setOrderedDrivers] = useState([]);
+	const [nearestDriver, setNearestDriver] = useState();
 
 	const handleSubmit = () => {
 		const request = {
+			hasCompanions: {
+				doesIt: false,
+			},
 			category,
 			tripType,
 			isReturnTrip,
-			numberOfRiders,
 			riderId,
 			departureTime,
 			status,
@@ -103,7 +106,8 @@ function MapContainer() {
 				headers: headers,
 			})
 				.then(function (response) {
-					console.log(response);
+					setOrderedDrivers(response.data);
+					console.log(response.data);
 					window.alert("request dispatched");
 				})
 				.catch(function (response) {
@@ -121,6 +125,12 @@ function MapContainer() {
 	// const handleSelection = (driver) => {
 	// 	console.log(driver);
 	// };
+
+	useEffect(() => {
+		setNearestDriver(orderedDrivers[0]);
+		console.log("orderedDrivers", orderedDrivers);
+	}, [orderedDrivers]);
+
 	if (loadError) return "Error Loading";
 	if (!isLoaded) return "Map Loading";
 	return (
@@ -132,22 +142,60 @@ function MapContainer() {
 				center={center}
 				options={options}
 			>
-				{drivers?.map((driver) => (
-					<Marker
-						key={driver.id}
-						position={{
-							lat: parseFloat(driver.location._latitude),
-							lng: parseFloat(driver.location._longitude),
-						}}
-						icon={{
-							url: "/frontal-taxi-cab.svg",
-							scaledSize: new window.google.maps.Size(30, 30),
-							origin: new window.google.maps.Point(0, 0),
-							anchor: new window.google.maps.Point(15, 15),
-						}}
-						onClick={() => setSelectedDriver(driver)}
-					/>
-				))}
+				{drivers?.map((driver) => {
+					if (nearestDriver) {
+						if (driver.id === nearestDriver?.id)
+							return (
+								<Marker
+									key={driver.id}
+									position={{
+										lat: parseFloat(driver.location._latitude),
+										lng: parseFloat(driver.location._longitude),
+									}}
+									icon={{
+										url: "/greenTaxi.png",
+										scaledSize: new window.google.maps.Size(30, 30),
+										origin: new window.google.maps.Point(0, 0),
+										anchor: new window.google.maps.Point(15, 15),
+									}}
+									onClick={() => setSelectedDriver(driver)}
+								/>
+							);
+						else
+							return (
+								<Marker
+									key={driver.id}
+									position={{
+										lat: parseFloat(driver.location._latitude),
+										lng: parseFloat(driver.location._longitude),
+									}}
+									icon={{
+										url: "/frontal-taxi-cab.svg",
+										scaledSize: new window.google.maps.Size(30, 30),
+										origin: new window.google.maps.Point(0, 0),
+										anchor: new window.google.maps.Point(15, 15),
+									}}
+									onClick={() => setSelectedDriver(driver)}
+								/>
+							);
+					} else
+						return (
+							<Marker
+								key={driver.id}
+								position={{
+									lat: parseFloat(driver.location._latitude),
+									lng: parseFloat(driver.location._longitude),
+								}}
+								icon={{
+									url: "/frontal-taxi-cab.svg",
+									scaledSize: new window.google.maps.Size(30, 30),
+									origin: new window.google.maps.Point(0, 0),
+									anchor: new window.google.maps.Point(15, 15),
+								}}
+								onClick={() => setSelectedDriver(driver)}
+							/>
+						);
+				})}
 				{selectedDriver ? (
 					<InfoWindow
 						position={{
@@ -230,7 +278,7 @@ function MapContainer() {
 						onChange={(e) => setDestination(e.target.value)}
 						fullWidth
 					/>
-					<TextField
+					{/* <TextField
 						autoFocus
 						margin="dense"
 						id="numberOfRiders"
@@ -239,7 +287,7 @@ function MapContainer() {
 						value={numberOfRiders}
 						onChange={(e) => setNumberOfRiders(e.target.value)}
 						fullWidth
-					/>
+					/> */}
 					<TextField
 						autoFocus
 						margin="dense"
