@@ -13,6 +13,9 @@ import CarList from "./pages/carList/carList";
 import NewCar from "./pages/newCar/NewCar";
 import CarCategory from "./pages/carCategory/CarCategory";
 import Login from "./pages/login/Login";
+import HelpDesk from "./pages/helpDesk/home/HelpDesk";
+import Driver from "./pages/driver/Driver";
+import NewDriver from "./pages/newDriver/NewDriver";
 
 function App() {
 	return (
@@ -31,14 +34,20 @@ function App() {
 							<Route exact path="/">
 								<Home />
 							</Route>
+							<Route exact path="/helpdesk">
+								<HelpDesk />
+							</Route>
 							<Route path="/drivers">
 								<DriverList />
 							</Route>
-							<Route path="/newUser">
-								<NewUser />
+							<Route path="/newDriver">
+								<NewDriver />
 							</Route>
 							<Route path="/riders">
 								<RiderList />
+							</Route>
+							<Route path="/driver/:driverId">
+								<Driver />
 							</Route>
 							<Route path="/product/:productId">
 								<Product />

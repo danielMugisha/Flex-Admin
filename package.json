@@ -7,17 +7,23 @@
     "@material-ui/data-grid": "^4.0.0-alpha.29",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.60",
+    "@reach/combobox": "^0.15.3",
+    "@react-google-maps/api": "^2.2.0",
     "@reduxjs/toolkit": "^1.6.1",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "axios": "^0.21.1",
+    "date-fns": "^2.23.0",
     "firebase": "^8.6.7",
     "firebase-admin": "^9.9.0",
+    "google-map-react": "^2.1.10",
+    "google-maps-react": "^2.0.6",
     "react": "^17.0.2",
     "react-alert": "^7.0.3",
     "react-alert-template-basic": "^1.0.2",
     "react-dom": "^17.0.2",
+    "react-google-maps": "^9.4.5",
     "react-popup-alert": "^2.0.0",
     "react-redux": "^7.2.4",
     "react-redux-firebase": "^2.2.4",
@@ -27,6 +33,7 @@
     "redux": "^4.1.0",
     "redux-firestore": "^0.15.0",
     "redux-thunk": "^2.3.0",
+    "use-places-autocomplete": "^1.9.4",
     "web-vitals": "^1.0.1"
   },
   "scripts": {
@@ -52,5 +59,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-decorators": "^7.14.5"
   }
 }

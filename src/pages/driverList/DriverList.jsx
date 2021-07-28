@@ -58,7 +58,10 @@ const DriverList = () => {
 						</Link>
 						<DeleteOutline
 							className="userListDelete"
-							onClick={() => handleDelete(params.row.id)}
+							onClick={() => {
+								console.log("id", params.row.id);
+								handleDelete(params.row.id);
+							}}
 						/>
 					</>
 				);
@@ -69,17 +72,24 @@ const DriverList = () => {
 
 	if (!user.uid) return <Redirect to="login" />;
 	return (
-		<div className="userList">
-			<h1 className="driversTitle">Drivers</h1>
-			<DataGrid
-				autoHeight
-				rows={data}
-				disableSelectionOnClick
-				columns={columns}
-				pageSize={8}
-				checkboxSelection
-			/>
-		</div>
+		<>
+			<div className="userList">
+				<h1 className="driversTitle">Drivers</h1>
+				<DataGrid
+					autoHeight
+					rows={data}
+					disableSelectionOnClick
+					columns={columns}
+					pageSize={8}
+					checkboxSelection
+				/>
+			</div>
+			<div className="userTitleContainer">
+				<Link to="/newDriver">
+					<button className="userAddButton">Create</button>
+				</Link>
+			</div>
+		</>
 	);
 };
 

@@ -15,19 +15,17 @@ export default function Driver() {
 	const { allDrivers } = useSelector((state) => state);
 
 	const { driverId } = useParams();
+	console.log("driver id:", driverId);
 	const driver = allDrivers.drivers.filter(
 		(driver) => driver.id == driverId
 	)[0];
 
-	console.log(driver);
+	console.log("driver", driver);
 	if (!user.uid) return <Redirect to="/login" />;
 	return (
 		<div className="user">
 			<div className="userTitleContainer">
 				<h1 className="userTitle">Edit driver</h1>
-				<Link to="/newUser">
-					<button className="userAddButton">Create</button>
-				</Link>
 			</div>
 			<div className="userContainer">
 				<div className="userShow">

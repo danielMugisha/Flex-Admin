@@ -10,7 +10,6 @@ const Topbar = () => {
 	const user = state.firebase.auth;
 	const profile = state.firebase.profile;
 	const dispatch = useDispatch();
-	console.log(state);
 
 	const handleLogout = () => {
 		dispatch(signOut());
@@ -33,6 +32,9 @@ const Topbar = () => {
 								alt=""
 								className="topAvatar"
 							/>
+							<div className="topbarIconContainer">
+								<button onClick={handleLogout}>Logout</button>
+							</div>
 						</>
 					) : (
 						""

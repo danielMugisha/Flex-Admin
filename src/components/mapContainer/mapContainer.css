@@ -1,0 +1,13 @@
+.mapContainer {
+	border: 1px solid red;
+	position: relative;
+}
+.search {
+	position: absolute;
+	top: 1rem;
+	left: 1rem;
+	color: #281414;
+	z-index: 1000;
+	margin: 0;
+	padding: 0;
+}

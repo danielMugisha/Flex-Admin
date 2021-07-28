@@ -56,6 +56,7 @@ export default function SignIn() {
 	const dispatch = useDispatch();
 	const { auth } = useSelector((state) => state);
 	const user = useSelector((state) => state.firebase.auth);
+	const role = useSelector((state) => state.firebase.profile.role);
 
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
@@ -73,7 +74,10 @@ export default function SignIn() {
 		dispatch(signIn({ email, password }));
 	};
 
-	if (user.uid) return <Redirect to="/" />;
+	if (user.uid) {
+		if (role == "admin") return <Redirect to="/" />;
+		if (role == "help-desk") return <Redirect to="/helpdesk" />;
+	}
 	return (
 		<Container component="main" maxWidth="xs">
 			<CssBaseline />
@@ -129,11 +133,6 @@ export default function SignIn() {
 						<Grid item xs>
 							<Link href="#" variant="body2">
 								Forgot password?
-							</Link>
-						</Grid>
-						<Grid item>
-							<Link href="#" variant="body2">
-								{"Don't have an account? Sign Up"}
 							</Link>
 						</Grid>
 					</Grid>
