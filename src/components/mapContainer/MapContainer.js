@@ -78,7 +78,7 @@ function MapContainer() {
 	const [otherDestination, setOtherDestination] = useState();
 	const [rider, setRider] = useState({ name: "", location: {} });
 
-	const URL = "http://localhost:8080/api/rideRequest";
+	const URL = "https://flexgo-backend.herokuapp.com/api/rideRequest";
 	const [orderedDrivers, setOrderedDrivers] = useState([]);
 	const [nearestDriver, setNearestDriver] = useState();
 	const [destination, setDestination] = useState({});
