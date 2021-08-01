@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import "./mapContainer.css";
 import {
 	GoogleMap,
@@ -33,7 +33,7 @@ import axios from "axios";
 //const libraries = ["places"];
 const mapContainerStyle = {
 	width: "100%",
-	height: "600px",
+	height: "500px",
 };
 const center = { lat: -1.9397, lng: 30.0557 };
 const options = {
@@ -67,13 +67,30 @@ function MapContainer() {
 	const [destination, setDestination] = useState("");
 	const [pickLat, setPickLat] = useState(0);
 	const [pickLng, setPickLng] = useState(0);
+	const [rider, setRider] = useState({ destination: null, location: null });
 
 	const pickUpLocation = { latitude: pickLat, longitude: pickLng };
 	const URL = "https://flexgo-backend.herokuapp.com/api/rideRequest";
 	const [orderedDrivers, setOrderedDrivers] = useState([]);
 	const [nearestDriver, setNearestDriver] = useState();
 
+	const [, updateState] = useState();
+	const forceUpdate = useCallback(() => updateState({}), []);
+	useEffect(() => {
+		if (nearestDriver) {
+			const timer = setTimeout(() => {
+				setNearestDriver(null);
+				forceUpdate();
+			}, 1000 * 30);
+			return () => clearTimeout(timer);
+		}
+	}, [nearestDriver]);
+
 	const handleSubmit = () => {
+		setRider({
+			destination: destination,
+			location: { lat: pickUpLocation.latitude, lng: pickUpLocation.longitude },
+		});
 		const request = {
 			hasCompanions: {
 				doesIt: false,
@@ -107,24 +124,25 @@ function MapContainer() {
 			})
 				.then(function (response) {
 					setOrderedDrivers(response.data);
-					console.log(response.data);
-					window.alert("request dispatched");
+					setTimeout(setNearestDriver(null), 1.0 * 1000);
+					setOpen(false);
 				})
 				.catch(function (response) {
 					//handle error
 					console.log(response);
-					window.alert("something went wrong");
+					setOpen(false);
 				});
 		} catch (err) {
 			console.log(err);
 			window.log("something went wrong");
 		}
 	};
-
 	const [selectedDriver, setSelectedDriver] = useState(null);
-	// const handleSelection = (driver) => {
-	// 	console.log(driver);
-	// };
+
+	const handleMarkerClick = (driver) => {
+		console.log(driver);
+		setSelectedDriver(driver);
+	};
 
 	useEffect(() => {
 		setNearestDriver(orderedDrivers[0]);
@@ -134,191 +152,231 @@ function MapContainer() {
 	if (loadError) return "Error Loading";
 	if (!isLoaded) return "Map Loading";
 	return (
-		<div className="mapContainer">
-			<Search />
-			<GoogleMap
-				mapContainerStyle={mapContainerStyle}
-				zoom={14}
-				center={center}
-				options={options}
-			>
-				{drivers?.map((driver) => {
-					if (nearestDriver) {
-						if (driver.id === nearestDriver?.id)
-							return (
-								<Marker
-									key={driver.id}
-									position={{
-										lat: parseFloat(driver.location._latitude),
-										lng: parseFloat(driver.location._longitude),
-									}}
-									icon={{
-										url: "/greenTaxi.png",
-										scaledSize: new window.google.maps.Size(30, 30),
-										origin: new window.google.maps.Point(0, 0),
-										anchor: new window.google.maps.Point(15, 15),
-									}}
-									onClick={() => setSelectedDriver(driver)}
-								/>
-							);
-						else
-							return (
-								<Marker
-									key={driver.id}
-									position={{
-										lat: parseFloat(driver.location._latitude),
-										lng: parseFloat(driver.location._longitude),
-									}}
-									icon={{
-										url: "/frontal-taxi-cab.svg",
-										scaledSize: new window.google.maps.Size(30, 30),
-										origin: new window.google.maps.Point(0, 0),
-										anchor: new window.google.maps.Point(15, 15),
-									}}
-									onClick={() => setSelectedDriver(driver)}
-								/>
-							);
-					} else
-						return (
+		<>
+			<div className="wrapperTitle">Flex Go Real Time Driver Tracking</div>
+			<div className="helpDesk">
+				<div className="mapContainer">
+					<GoogleMap
+						mapContainerStyle={mapContainerStyle}
+						zoom={14}
+						center={center}
+						options={options}
+					>
+						{drivers?.map((driver) => {
+							if (nearestDriver) {
+								if (driver.id === nearestDriver?.id)
+									return (
+										<Marker
+											value={driver}
+											key={driver.id}
+											position={{
+												lat: parseFloat(driver.location._latitude),
+												lng: parseFloat(driver.location._longitude),
+											}}
+											icon={{
+												url: "/greenTaxi.png",
+												scaledSize: new window.google.maps.Size(30, 30),
+												origin: new window.google.maps.Point(0, 0),
+												anchor: new window.google.maps.Point(15, 15),
+											}}
+											onClick={(e) => handleMarkerClick(driver)}
+										/>
+									);
+								else
+									return (
+										<Marker
+											value={driver}
+											key={driver.id}
+											position={{
+												lat: parseFloat(driver.location._latitude),
+												lng: parseFloat(driver.location._longitude),
+											}}
+											icon={{
+												url: "/frontal-taxi-cab.svg",
+												scaledSize: new window.google.maps.Size(30, 30),
+												origin: new window.google.maps.Point(0, 0),
+												anchor: new window.google.maps.Point(15, 15),
+											}}
+											onClick={(e) => handleMarkerClick(driver)}
+										/>
+									);
+							} else
+								return (
+									<Marker
+										value={driver}
+										key={driver.id}
+										position={{
+											lat: parseFloat(driver.location._latitude),
+											lng: parseFloat(driver.location._longitude),
+										}}
+										icon={{
+											url: "/frontal-taxi-cab.svg",
+											scaledSize: new window.google.maps.Size(30, 30),
+											origin: new window.google.maps.Point(0, 0),
+											anchor: new window.google.maps.Point(15, 15),
+										}}
+										onClick={(e) => handleMarkerClick(driver)}
+									/>
+								);
+						})}
+						{rider ? (
 							<Marker
-								key={driver.id}
 								position={{
-									lat: parseFloat(driver.location._latitude),
-									lng: parseFloat(driver.location._longitude),
+									lat: parseFloat(rider?.location?.lat),
+									lng: parseFloat(rider?.location?.lng),
 								}}
 								icon={{
-									url: "/frontal-taxi-cab.svg",
 									scaledSize: new window.google.maps.Size(30, 30),
 									origin: new window.google.maps.Point(0, 0),
 									anchor: new window.google.maps.Point(15, 15),
 								}}
-								onClick={() => setSelectedDriver(driver)}
 							/>
-						);
-				})}
-				{selectedDriver ? (
-					<InfoWindow
-						position={{
-							lat: selectedDriver.location._latitude,
-							lng: selectedDriver.location._longitude,
-						}}
-						onCloseClick={setSelectedDriver(null)}
-					>
+						) : null}
+						{selectedDriver ? (
+							<InfoWindow
+								position={{
+									lat: selectedDriver.location._latitude,
+									lng: selectedDriver.location._longitude,
+								}}
+								onCloseClick={setSelectedDriver(null)}
+							>
+								<div>
+									<h2>{`${selectedDriver.fname} ${selectedDriver.lname}`}</h2>
+									<p>Status: {selectedDriver.status}</p>
+								</div>
+							</InfoWindow>
+						) : null}
+					</GoogleMap>
+				</div>
+				<div className="dispatch">
+					{nearestDriver ? (
 						<div>
-							<h2>{`${selectedDriver.fname} ${selectedDriver.lname}`}</h2>
-							<p>Status: {selectedDriver.status}</p>
+							<div className="dispatchTitle">Action Dispatched!</div>
+							<div className="requestDetails">
+								<h3>Request Details</h3>
+								<div className="requestInfo">
+									<div className="infoKey">Notification sent to:</div>
+									<div className="infoValue">
+										{orderedDrivers[0]?.lname} {orderedDrivers[0]?.fname}
+									</div>
+								</div>
+								<div className="requestInfo">
+									<div className="infoKey">Distance to rider:</div>
+									<div className="infoValue">
+										{orderedDrivers[0]?.distanceToRider} Km
+									</div>
+								</div>
+							</div>
+							<div className="waiting">Waiting...</div>
 						</div>
-					</InfoWindow>
-				) : null}
-			</GoogleMap>
-			<Button variant="outlined" color="primary" onClick={handleClickOpen}>
-				Dispatch a request
-			</Button>
-			<Dialog
-				open={open}
-				onClose={handleClose}
-				aria-labelledby="form-dialog-title"
-			>
-				<DialogTitle id="form-dialog-title">
-					Dispatch a Ride Request
-				</DialogTitle>
-				<DialogContent>
-					<DialogContentText>
-						You can dispatch a request by filling in the required info and click
-						dispatch
-					</DialogContentText>
-					<TextField
-						autoFocus
-						margin="dense"
-						id="category"
-						label="Trip Category"
-						type="text"
-						value={category}
-						onChange={(e) => setCategory(e.target.value)}
-						fullWidth
-					/>
-					<TextField
-						autoFocus
-						margin="dense"
-						id="tripType"
-						label="Trip Type"
-						type="text"
-						value={tripType}
-						onChange={(e) => setTripType(e.target.value)}
-						fullWidth
-					/>
-					<div>
-						Location
+					) : (
+						<div className="dispatchTitle">
+							<Button
+								variant="outlined"
+								color="primary"
+								onClick={handleClickOpen}
+							>
+								Dispatch a request
+							</Button>
+						</div>
+					)}
+				</div>
+				<Dialog
+					open={open}
+					onClose={handleClose}
+					aria-labelledby="form-dialog-title"
+				>
+					<DialogTitle id="form-dialog-title">
+						Dispatch a Ride Request
+					</DialogTitle>
+					<DialogContent>
+						<DialogContentText>
+							You can dispatch a request by filling in the required info and
+							click dispatch
+						</DialogContentText>
 						<TextField
 							autoFocus
 							margin="dense"
-							id="locLatitude"
-							label="Current Latitude"
-							type="number"
-							value={pickLat}
-							onChange={(e) => setPickLat(e.target.value)}
+							id="category"
+							label="Trip Category"
+							type="text"
+							value={category}
+							onChange={(e) => setCategory(e.target.value)}
+							fullWidth
 						/>
 						<TextField
 							autoFocus
 							margin="dense"
-							id="locLongitude"
-							label="Current Longitude"
-							type="number"
-							value={pickLng}
-							onChange={(e) => setPickLng(e.target.value)}
+							id="tripType"
+							label="Trip Type"
+							type="text"
+							value={tripType}
+							onChange={(e) => setTripType(e.target.value)}
+							fullWidth
 						/>
-					</div>
-					<TextField
-						autoFocus
-						margin="dense"
-						id="destination"
-						label="Destination"
-						type="text"
-						value={destination}
-						onChange={(e) => setDestination(e.target.value)}
-						fullWidth
-					/>
-					{/* <TextField
-						autoFocus
-						margin="dense"
-						id="numberOfRiders"
-						label="Number of Riders"
-						type="number"
-						value={numberOfRiders}
-						onChange={(e) => setNumberOfRiders(e.target.value)}
-						fullWidth
-					/> */}
-					<TextField
-						autoFocus
-						margin="dense"
-						id="departureTime"
-						label="DepartureTime"
-						type="text"
-						value={departureTime}
-						onChange={(e) => setDepartureTime(e.target.value)}
-						fullWidth
-					/>
-					<TextField
-						autoFocus
-						margin="dense"
-						id="isReturnTrip"
-						label="Is It a Return Trip"
-						type="text"
-						value={isReturnTrip}
-						onChange={(e) => setIsReturnTrip(new Boolean(e.target.value))}
-						fullWidth
-					/>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleClose} color="primary">
-						Cancel
-					</Button>
-					<Button onClick={handleSubmit} color="primary">
-						Dispatch
-					</Button>
-				</DialogActions>
-			</Dialog>
-		</div>
+						<div>
+							Location
+							<TextField
+								autoFocus
+								margin="dense"
+								id="locLatitude"
+								label="Current Latitude"
+								type="number"
+								value={pickLat}
+								onChange={(e) => setPickLat(e.target.value)}
+							/>
+							<TextField
+								autoFocus
+								margin="dense"
+								id="locLongitude"
+								label="Current Longitude"
+								type="number"
+								value={pickLng}
+								onChange={(e) => setPickLng(e.target.value)}
+							/>
+						</div>
+						<TextField
+							autoFocus
+							margin="dense"
+							id="destination"
+							label="Destination"
+							type="text"
+							value={destination}
+							onChange={(e) => setDestination(e.target.value)}
+							fullWidth
+						/>
+						<TextField
+							autoFocus
+							margin="dense"
+							id="departureTime"
+							label="DepartureTime"
+							type="text"
+							value={departureTime}
+							onChange={(e) => setDepartureTime(e.target.value)}
+							fullWidth
+						/>
+						<TextField
+							autoFocus
+							margin="dense"
+							id="isReturnTrip"
+							label="Is It a Return Trip"
+							type="text"
+							value={isReturnTrip}
+							onChange={(e) => setIsReturnTrip(new Boolean(e.target.value))}
+							fullWidth
+						/>
+					</DialogContent>
+					<DialogActions>
+						<Button onClick={handleClose} color="primary">
+							Cancel
+						</Button>
+						<Button onClick={handleSubmit} color="primary">
+							Dispatch
+						</Button>
+					</DialogActions>
+				</Dialog>
+			</div>
+		</>
 	);
 }
 

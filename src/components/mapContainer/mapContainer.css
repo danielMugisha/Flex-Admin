@@ -1,13 +1,46 @@
-.mapContainer {
-	border: 1px solid red;
-	position: relative;
+.helpDesk {
+	display: flex;
+	padding: 8px;
+	justify-content: space-between;
 }
-.search {
-	position: absolute;
-	top: 1rem;
-	left: 1rem;
-	color: #281414;
-	z-index: 1000;
-	margin: 0;
-	padding: 0;
+.mapContainer {
+	position: relative;
+	border-bottom: 8px;
+	width: 70%;
+}
+
+.dispatch {
+	min-width: 28%;
+	padding: 8px;
+	border: 1px solid rgb(154, 213, 236);
+}
+.dispatchTitle {
+	font-weight: bold;
+	color: #0289b2;
+	text-align: center;
+}
+
+.requestDetails {
+	margin-top: 20px;
+	text-align: center;
+}
+
+.requestInfo {
+	margin-top: 12px;
+	display: flex;
+	justify-content: center;
+}
+
+.infoKey {
+	margin-right: 4px;
+}
+
+.infoValue {
+	font-weight: bold;
+}
+
+.waiting {
+	margin-top: 50px;
+	text-align: center;
+	color: #0289b2;
 }
