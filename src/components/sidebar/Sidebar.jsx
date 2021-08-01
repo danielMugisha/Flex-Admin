@@ -156,7 +156,7 @@ export default function Sidebar() {
 								<Link to="/helpdesk" className="link">
 									<li className="sidebarListItem">
 										<PermIdentity className="sidebarIcon" />
-										My Reports
+										My Report
 									</li>
 								</Link>
 							</ul>

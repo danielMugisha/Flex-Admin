@@ -1,17 +1,17 @@
-.helpDesk {
-	display: flex;
-	padding: 8px;
-	justify-content: space-between;
-}
 .mapContainer {
 	position: relative;
 	border-bottom: 8px;
-	width: 70%;
+	width: 100%;
 }
 
 .dispatch {
+	position: absolute;
 	min-width: 28%;
 	padding: 8px;
+	margin: 8px;
+	top: 0;
+	right: 0;
+	background-color: #b2e8f8a9;
 	border: 1px solid rgb(154, 213, 236);
 }
 .dispatchTitle {
@@ -43,4 +43,99 @@
 	margin-top: 50px;
 	text-align: center;
 	color: #0289b2;
+}
+
+.inputField {
+	margin: 12px 0;
+}
+
+.search {
+	position: fixed;
+	width: 400px;
+	padding: 8px;
+}
+.searchInput {
+	width: 100%;
+	padding: 8px;
+	border: 1px solid#0289b2;
+	border-radius: 4px;
+	outline: #0289b2;
+	position: relative;
+}
+.searchInput2 {
+	width: 92%;
+	padding: 16px;
+	border: 1px solid#cfcfcf;
+	border-radius: 4px;
+	outline: none;
+	position: relative;
+	font: inherit;
+}
+
+.searchPopover {
+	z-index: 100;
+	position: absolute;
+}
+
+.dispatchForm {
+	position: absolute;
+	width: 40%;
+	height: 500px;
+	overflow: scroll;
+	padding: 8px;
+	margin: 8px;
+	right: 0;
+	background-color: #ffffff;
+	border: 1px solid rgb(154, 213, 236);
+	z-index: 100;
+	border-radius: 4px;
+}
+
+.dispatchForm h1 {
+	text-align: center;
+	margin-bottom: 4px;
+}
+
+.forSearch {
+	margin: 12px;
+	padding-bottom: 12px;
+}
+
+.overlay {
+	position: absolute;
+	width: 100%;
+	height: 100vh;
+	background-color: rgba(50, 69, 77, 0.699);
+	z-index: 5;
+}
+
+.dispatchButton button {
+	width: 180px;
+	height: 40px;
+	position: absolute;
+	margin: 8px;
+	right: 0;
+	top: 0;
+	background-color: #0289b2;
+	color: #ffffff;
+	font-weight: 700;
+	border-radius: 4px;
+	text-transform: uppercase;
+	font: inherit;
+	border: none;
+	z-index: 50;
+}
+
+.inputWrapper {
+	width: 95%;
+	display: flex;
+	align-items: center;
+}
+.line {
+	flex-grow: 1;
+}
+
+.dispatchButtons {
+	display: flex;
+	justify-content: space-evenly;
 }
