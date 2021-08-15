@@ -17,10 +17,10 @@ import { setCars } from "../../store/actions/carsActions";
 import { signOut } from "../../store/actions/authActions";
 
 export default function Sidebar() {
-	const DRIVERS_URL = "https://flexgo-backend.herokuapp.com/api/drivers";
-	const CATS_URL = "https://flexgo-backend.herokuapp.com/api/car/categories";
-	const CARS_URL = "https://flexgo-backend.herokuapp.com/api/cars";
-	const RIDERS_URL = "https://flexgo-backend.herokuapp.com/api/riders";
+	const DRIVERS_URL = `${process.env.REACT_APP_API}/drivers`;
+	const CATS_URL = `${process.env.REACT_APP_API}/car/categories`;
+	const CARS_URL = `${process.env.REACT_APP_API}/cars`;
+	const RIDERS_URL = `${process.env.REACT_APP_API}/riders`;
 	const state = useSelector((state) => state);
 	const user = state.firebase.auth;
 	const profile = state.firebase.profile;

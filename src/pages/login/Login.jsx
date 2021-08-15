@@ -62,7 +62,7 @@ export default function SignIn() {
 	const [password, setPassword] = useState("");
 
 	const handleChange = (e) => {
-		if (e.target.id == "email") {
+		if (e.target.id === "email") {
 			setEmail(e.target.value);
 		} else if (e.target.id == "password") {
 			setPassword(e.target.value);
@@ -75,8 +75,8 @@ export default function SignIn() {
 	};
 
 	if (user.uid) {
-		if (role == "admin") return <Redirect to="/" />;
-		if (role == "help-desk") return <Redirect to="/helpdesk" />;
+		if (role === "admin") return <Redirect to="/" />;
+		if (role === "help-desk") return <Redirect to="/helpdesk" />;
 	}
 	return (
 		<Container component="main" maxWidth="xs">

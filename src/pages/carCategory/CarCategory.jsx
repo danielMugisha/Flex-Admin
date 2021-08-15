@@ -14,7 +14,7 @@ const CarCategory = () => {
 	const data = useSelector((state) => state.allCategories.categories);
 	console.log("datatttta", data);
 	// ADD CATEGORY START
-	const ADD_URL = "https://flexgo-backend.herokuapp.com/api/car/category/add";
+	const ADD_URL = `${process.env.REACT_APP_API}/car/category/add`;
 	const [subCategories, setSubCategories] = useState([]);
 	const [name, setName] = useState("");
 	const [subCat, setSubCat] = useState("");
@@ -62,8 +62,7 @@ const CarCategory = () => {
 	// ADD CATEGORY END
 
 	// EDIT CATEGORY START
-	const UPDATE_URL =
-		"https://flexgo-backend.herokuapp.com/api/car/category/update";
+	const UPDATE_URL = `${process.env.REACT_APP_API}/car/category/update`;
 
 	const [selectedCat, setSelectedCat] = useState(null);
 	const [selectedSubCats, setSelectedSubCats] = useState([]);

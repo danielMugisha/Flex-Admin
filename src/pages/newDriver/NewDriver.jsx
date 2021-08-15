@@ -10,16 +10,16 @@ import IconButton from "@material-ui/core/IconButton";
 import PhotoCamera from "@material-ui/icons/PhotoCamera";
 import AttachmentIcon from "@material-ui/icons/Attachment";
 import "./newDriver.css";
-import { useDispatch, useSelector } from "react-redux";
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useSelector } from "react-redux";
+import { useState, useEffect, useCallback } from "react";
 import { Redirect } from "react-router";
+import axios from "axios";
 const admin = require("firebase-admin");
 
 const useStyles = makeStyles((theme) => ({
 	formControl: {
 		margin: theme.spacing(1),
-		minWidth: 400,
+		minWidth: "97%",
 	},
 	selectEmpty: {
 		marginTop: theme.spacing(2),
@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const accountTypes = ["I AM A CAR OWNER", "I AM A DRIVER", "I DRIVE MY CAR"];
-const URL = "https://flexgo-backend.herokuapp.com/api/car/add";
+const URL = `http://localhost:8080/api/driver/register`;
 
 export default function NewDriver() {
 	const user = useSelector((state) => state.firebase.auth);
@@ -45,103 +45,84 @@ export default function NewDriver() {
 	const classes = useStyles();
 	const [subCategories, setSubCategories] = useState("");
 
-	const [countries, setCountries] = useState([]);
-	const [cities, setCities] = useState([]);
-	const [lat, setLat] = useState(0);
-	const [long, setLong] = useState(0);
+	const [lat, setLat] = useState(-1.9495199270072534);
+	const [long, setLong] = useState(30.124528673106347);
 	const [location, setLocation] = useState(
 		new admin.firestore.GeoPoint(lat, long)
 	);
 
-	const initialValues = {
+	const [driver, setDriver] = useState({
 		accountType: "",
 		fname: "",
 		lname: "",
 		email: "",
 		phone: "",
-		address: { country: "", city: "" },
+		address: "",
 		gender: "",
 		bdate: "",
 		password: "",
-		docs: { nid: null, drivingLicence: null, criminalRecord: null },
-		faceImage: [],
+		docs: [],
+		images: [],
 		status: "online",
 		location: location,
-	};
+	});
 
-	let documents = {};
-	let imgs = [];
-
-	const [driver, setDriver] = useState(initialValues);
+	const [doc, setDoc] = useState(null);
+	const [img, setImg] = useState(null);
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
+		console.log("=====================================>", name, value);
 		setDriver({
 			...driver,
 			[name]: value,
 		});
 	};
 
-	const [addressRaw, setAddressRaw] = useState({
-		country: "",
-		city: "",
-	});
-
-	const handleChangeAddress = (e) => {
-		const { name, value } = e.target;
-		setAddressRaw({
-			...addressRaw,
-			[name]: value,
-		});
-	};
-
-	useEffect(() => {
-		setDriver({
-			...driver,
-			address: addressRaw,
-		});
-	}, [addressRaw]);
+	const [, updateState] = useState();
+	const forceUpdate = useCallback(() => updateState({}), []);
 
 	const handleFileUpload = (e) => {
 		const { id, files } = e.target;
-		if (id == "uploadFile") {
-			documents.push(files[0]);
+		if (id === "uploadFile") {
+			setDoc(files[0]);
 			setDriver({
 				...driver,
-				docs: documents,
+				docs: doc,
 			});
 		} else if (id == "uploadImage") {
-			imgs.push(files[0]);
+			setImg(files[0]);
 			setDriver({
 				...driver,
-				images: imgs,
+				images: img,
 			});
 		}
 	};
 
 	const handleSubmit = () => {
-		// try {
-		// 	axios({
-		// 		method: "post",
-		// 		url: URL,
-		// 		data: car,
-		// 		headers: { "Content-Type": "application/json" },
-		// 	})
-		// 		.then(function (response) {
-		// 			//handle success
-		// 			console.log(response);
-		// 			document.getElementById("myForm").reset();
-		// 			window.alert("car added");
-		// 		})
-		// 		.catch(function (response) {
-		// 			//handle error
-		// 			console.log(response);
-		// 			window.alert("something went wrong");
-		// 		});
-		// } catch (err) {
-		// 	console.log(err);
-		// 	window.log("something went wrong");
-		//		}
+		console.log("submit driver", driver);
+		try {
+			axios({
+				method: "post",
+				url: URL,
+				data: driver,
+				headers: { "Content-Type": "multipart/form-data" },
+			})
+				.then(function (response) {
+					//handle success
+					console.log(response);
+					// document.getElementById("myForm").reset();
+					// window.alert("car added");
+				})
+				.catch(function (response) {
+					//handle error
+					console.log(response);
+					window.alert("something went wrong");
+				});
+		} catch (err) {
+			console.log(err);
+			window.log("something went wrong");
+		}
 	};
 
 	useEffect(() => {}, []);
@@ -149,19 +130,20 @@ export default function NewDriver() {
 	if (!user.uid) return <Redirect to="login" />;
 	return (
 		<div className="newUser">
-			<h1 className="newUserTitle">Add a Driver</h1>
-			<div className="formWrapper">
-				<div className="form" id="myForm">
+			<div className="formWrapperD">
+				<h1 className="newUserTitle">Add a Driver</h1>
+
+				<div className="driverForm" id="myForm">
 					<FormControl variant="outlined" className={classes.formControl}>
-						<InputLabel id="demo-simple-select-outlined-label">
-							Account Type
-						</InputLabel>
-						<Select
+						<TextField
 							labelId="demo-simple-select-outlined-label"
 							id="demo-simple-select-outlined"
 							onChange={handleChange}
 							value={driver.accountType}
-							name="category"
+							label="Account Type"
+							name="accountType"
+							select
+							variant="outlined"
 						>
 							<MenuItem value="">
 								<em>None</em>
@@ -171,26 +153,66 @@ export default function NewDriver() {
 										return <MenuItem value={c}>{c}</MenuItem>;
 								  })
 								: ""}
-						</Select>
+						</TextField>
 					</FormControl>
 					<FormControl variant="outlined" className={classes.formControl}>
-						<InputLabel id="demo-simple-select-outlined-label">
-							Full Names
-						</InputLabel>
 						<TextField
 							labelId="demo-simple-select-outlined-label"
 							id="filled-number"
 							type="text"
-							name="names"
-							value={driver.names}
+							name="lname"
+							value={driver.lname}
 							onChange={handleChange}
 							variant="outlined"
+							label="Last Name"
 						/>
 					</FormControl>
 					<FormControl variant="outlined" className={classes.formControl}>
-						<InputLabel id="demo-simple-select-outlined-label">
-							Email
-						</InputLabel>
+						<TextField
+							labelId="demo-simple-select-outlined-label"
+							id="filled-number"
+							type="text"
+							name="fname"
+							value={driver.fname}
+							onChange={handleChange}
+							variant="outlined"
+							label="First Name"
+						/>
+					</FormControl>
+					<FormControl variant="outlined" className={classes.formControl}>
+						<TextField
+							id="date"
+							label="Birthday"
+							type="date"
+							name="bdate"
+							value={driver.bdate}
+							onChange={handleChange}
+							defaultValue={new Date()}
+							variant="outlined"
+							InputLabelProps={{
+								shrink: true,
+							}}
+						/>
+					</FormControl>
+					<FormControl variant="outlined" className={classes.formControl}>
+						<TextField
+							labelId="demo-simple-select-outlined-label"
+							id="demo-simple-select-outlined"
+							onChange={handleChange}
+							value={driver.gender}
+							label="Gender"
+							name="gender"
+							variant="outlined"
+							select
+						>
+							<MenuItem value="">
+								<em>Other</em>
+							</MenuItem>
+							<MenuItem value="Male">Male</MenuItem>
+							<MenuItem value="Female">Female</MenuItem>
+						</TextField>
+					</FormControl>
+					<FormControl variant="outlined" className={classes.formControl}>
 						<TextField
 							labelId="demo-simple-select-outlined-label"
 							id="filled-number"
@@ -199,75 +221,43 @@ export default function NewDriver() {
 							value={driver.email}
 							onChange={handleChange}
 							variant="outlined"
+							label="Email"
 						/>
 					</FormControl>
 					<FormControl variant="outlined" className={classes.formControl}>
-						<InputLabel id="demo-simple-select-outlined-label">
-							Phone
-						</InputLabel>
 						<TextField
 							labelId="demo-simple-select-outlined-label"
 							id="filled-number"
 							type="text"
-							name="Phone"
+							name="phone"
 							value={driver.phone}
 							onChange={handleChange}
 							variant="outlined"
+							label="Phone"
 						/>
 					</FormControl>
-					Address
 					<FormControl variant="outlined" className={classes.formControl}>
-						<InputLabel id="demo-simple-select-outlined-label">
-							Country
-						</InputLabel>
-						<Select
+						<TextField
 							labelId="demo-simple-select-outlined-label"
-							id="demo-simple-select-outlined"
-							onChange={handleChangeAddress}
-							value={driver.address.country}
-							name="province"
-						>
-							<MenuItem value="">
-								<em>None</em>
-							</MenuItem>
-							{countries
-								? countries.map((c) => {
-										return <MenuItem value={c}>{c}</MenuItem>;
-								  })
-								: ""}
-						</Select>
-					</FormControl>
-					<FormControl variant="outlined" className={classes.formControl}>
-						<InputLabel id="demo-simple-select-outlined-label">City</InputLabel>
-						<Select
-							labelId="demo-simple-select-outlined-label"
-							id="demo-simple-select-outlined"
-							onChange={handleChangeAddress}
-							value={driver.address.city}
-							name="district"
-						>
-							<MenuItem value="">
-								<em>None</em>
-							</MenuItem>
-							{cities?.map((c) => {
-								return <MenuItem value={c}>{c}</MenuItem>;
-							})}
-						</Select>
+							id="filled-number"
+							type="text"
+							name="address"
+							value={driver.address}
+							onChange={handleChange}
+							variant="outlined"
+							label="Address"
+						/>
 					</FormControl>
 					<div className="fileUploadField">
 						<input
 							className={classes.input}
 							id="uploadFile"
 							type="file"
-							multiple={false}
+							multiple
 							onChange={handleFileUpload}
 						/>
 						<label htmlFor="uploadFile">
-							{documents.length > 0
-								? documents.map((d) => {
-										return d.name;
-								  })
-								: "Documents"}
+							Documents
 							<IconButton
 								color="primary"
 								aria-label="upload picture"
@@ -277,11 +267,20 @@ export default function NewDriver() {
 							</IconButton>
 						</label>
 					</div>
+					<div className={classes.formControl}>
+						{doc ? (
+							<p style={{ fontWeight: "bold", margin: "0 12px" }}>{doc.name}</p>
+						) : (
+							""
+						)}
+					</div>
 					<div className="fileUploadField">
 						<input
 							className={classes.input}
 							id="uploadImage"
 							type="file"
+							accept={"image/*"}
+							multiple={false}
 							onChange={handleFileUpload}
 						/>
 						<label htmlFor="uploadImage">
@@ -295,8 +294,20 @@ export default function NewDriver() {
 							</IconButton>
 						</label>
 					</div>
-					<Button variant="contained" color="primary" onClick={handleSubmit}>
-						add a Car
+					<div className={classes.formControl}>
+						{img ? (
+							<p style={{ fontWeight: "bold", margin: "0 12px" }}>{img.name}</p>
+						) : (
+							""
+						)}
+					</div>
+					<Button
+						variant="contained"
+						color="primary"
+						onClick={handleSubmit}
+						className="submitButton"
+					>
+						Add Driver
 					</Button>
 				</div>
 			</div>

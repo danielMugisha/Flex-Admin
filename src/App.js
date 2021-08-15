@@ -4,8 +4,6 @@ import "./App.css";
 import Home from "./pages/home/Home";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import DriverList from "./pages/driverList/DriverList";
-//import User from "./pages/user/User";
-import NewUser from "./pages/newUser/NewUser";
 import RiderList from "./pages/riderList/RiderList";
 import Product from "./pages/product/Product";
 import NewProduct from "./pages/newProduct/NewProduct";

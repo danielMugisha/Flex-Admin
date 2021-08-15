@@ -1,6 +1,6 @@
 import axios from "axios";
-const API_URL = "https://flexgo-backend.herokuapp.com/api/drivers";
-const API_BASE_URL = "https://flexgo-backend.herokuapp.com/";
+const API_URL = `${process.env.REACT_APP_API}/drivers`;
+const API_BASE_URL = `${process.env.REACT_APP_URL}`;
 
 // window.onload = () => {
 //   getDrivers();

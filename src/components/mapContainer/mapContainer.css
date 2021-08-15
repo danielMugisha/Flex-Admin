@@ -47,34 +47,49 @@
 
 .inputField {
 	margin: 12px 0;
+	display: flex;
+	align-items: center;
+	width: 100%;
 }
 
 .search {
-	position: fixed;
 	width: 400px;
-	padding: 8px;
-}
-.searchInput {
-	width: 100%;
-	padding: 8px;
-	border: 1px solid#0289b2;
-	border-radius: 4px;
-	outline: #0289b2;
+	margin: 8px;
 	position: relative;
 }
-.searchInput2 {
-	width: 92%;
-	padding: 16px;
-	border: 1px solid#cfcfcf;
+.search #combo {
+	border: 1px solid lightgrey;
 	border-radius: 4px;
+	padding: 10px;
+	width: 94%;
 	outline: none;
-	position: relative;
 	font: inherit;
 }
 
-.searchPopover {
+.comboList {
 	z-index: 100;
 	position: absolute;
+}
+
+.inputGroup {
+	border: 1px solid lightgrey;
+	display: flex;
+	border-radius: 4px;
+}
+.destInput {
+	flex-grow: 1;
+}
+.destLabel {
+	margin: auto 8px;
+	color: rgb(122, 121, 121);
+}
+
+.destInput #combo {
+	border: none;
+	padding: 12px 0;
+	width: 92%;
+	outline: none;
+	font: inherit;
 }
 
 .dispatchForm {

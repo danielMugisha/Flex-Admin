@@ -6,7 +6,7 @@ import {
 	Marker,
 	InfoWindow,
 } from "@react-google-maps/api";
-import { formatRelative } from "date-fns";
+// import { formatRelative } from "date-fns";
 import mapStyles from "./mapStyles";
 import { useSelector } from "react-redux";
 import usePlacesAutocomplete, {
@@ -17,7 +17,7 @@ import {
 	Combobox,
 	ComboboxInput,
 	ComboboxPopover,
-	ComboboxList,
+	// ComboboxList,
 	ComboboxOption,
 } from "@reach/combobox";
 import "@reach/combobox/styles.css";
@@ -25,25 +25,26 @@ import Button from "@material-ui/core/Button";
 import axios from "axios";
 import {
 	TextField,
-	Dialog,
+	// Dialog,
 	Grid,
-	DialogActions,
-	DialogContent,
-	DialogContentText,
-	DialogTitle,
+	// DialogActions,
+	// DialogContent,
+	// DialogContentText,
+	// DialogTitle,
 	MenuItem,
 	Checkbox,
 	FormControlLabel,
 } from "@material-ui/core";
 
-import Paper from "@material-ui/core/Paper";
-import InputBase from "@material-ui/core/InputBase";
-import Divider from "@material-ui/core/Divider";
+// import Paper from "@material-ui/core/Paper";
+// import InputBase from "@material-ui/core/InputBase";
+// import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
-import SearchIcon from "@material-ui/icons/Search";
-import DirectionsIcon from "@material-ui/icons/Directions";
+// import MenuIcon from "@material-ui/icons/Menu";
+// import SearchIcon from "@material-ui/icons/Search";
+// import DirectionsIcon from "@material-ui/icons/Directions";
 import AddIcon from "@material-ui/icons/Add";
+import SearchLocation from "./SearchLocation";
 
 //const libraries = ["places"];
 const mapContainerStyle = {
@@ -64,12 +65,11 @@ const tripTypes = ["Single", "Multiple", "Rent"];
 function MapContainer() {
 	const { drivers } = useSelector((state) => state.allDrivers);
 	const { isLoaded, loadError } = useLoadScript({
-		googleMapsApiKey: "AIzaSyAJgkThrpvzmzSU7-7IYspebiELSdygtWk",
+		googleMapsApiKey: `AIzaSyAJgkThrpvzmzSU7-7IYspebiELSdygtWk`,
 		libraries: ["places"],
 	});
 	const [selectedDriver, setSelectedDriver] = useState(null);
 
-	const riderLabel = <p style={{ fontWeight: "bold" }}>Rider</p>;
 	const [open, setOpen] = useState(false);
 
 	const [, updateState] = useState();
@@ -78,7 +78,7 @@ function MapContainer() {
 	const [otherDestination, setOtherDestination] = useState();
 	const [rider, setRider] = useState({ name: "", location: {} });
 
-	const URL = "https://flexgo-backend.herokuapp.com/api/rideRequest";
+	const URL = `${process.env.REACT_APP_API}/rideRequest`;
 	const [orderedDrivers, setOrderedDrivers] = useState([]);
 	const [nearestDriver, setNearestDriver] = useState();
 	const [destination, setDestination] = useState({});
@@ -221,6 +221,7 @@ function MapContainer() {
 	};
 
 	const handleMarkerClick = (driver) => {
+		console.log(driver);
 		setSelectedDriver(driver);
 	};
 
@@ -235,17 +236,9 @@ function MapContainer() {
 
 	const panTo = useCallback(({ lat, lng }) => {
 		mapRef.current.panTo({ lat, lng });
-		mapRef.current.setZoom(15);
+		mapRef.current.setZoom(19);
 	}, []);
 
-	const myLabel = (
-		<div style={{ display: "flex", border: "1px solid blue", flexGrow: "2" }}>
-			<div>
-				<hr />
-			</div>
-			<div>Return Trip</div>
-		</div>
-	);
 	if (loadError) return "Error Loading";
 	if (!isLoaded) return "Map Loading";
 
@@ -255,16 +248,18 @@ function MapContainer() {
 				{open ? <div className="overlay"></div> : null}
 				<GoogleMap
 					mapContainerStyle={mapContainerStyle}
-					zoom={14}
+					zoom={15}
 					center={center}
 					options={options}
 					onLoad={onMapLoad}
 				>
-					<SearchPickUpLocation
-						panTo={panTo}
-						setRider={setRider}
-						forceUpdate={forceUpdate}
-					/>
+					<div className="search">
+						<SearchLocation
+							panTo={panTo}
+							setLocation={setRider}
+							forceUpdate={forceUpdate}
+						/>
+					</div>
 					{drivers?.map((driver) => {
 						if (nearestDriver) {
 							if (driver.id === nearestDriver?.id)
@@ -305,21 +300,42 @@ function MapContainer() {
 								);
 						} else
 							return (
-								<Marker
-									value={driver}
-									key={driver.id}
-									position={{
-										lat: parseFloat(driver.location._latitude),
-										lng: parseFloat(driver.location._longitude),
-									}}
-									icon={{
-										url: "/frontal-taxi-cab.svg",
-										scaledSize: new window.google.maps.Size(20, 20),
-										origin: new window.google.maps.Point(0, 0),
-										anchor: new window.google.maps.Point(10, 10),
-									}}
-									onClick={(e) => handleMarkerClick(driver)}
-								/>
+								<>
+									<Marker
+										value={driver}
+										key={driver.id}
+										position={{
+											lat: parseFloat(driver.location._latitude),
+											lng: parseFloat(driver.location._longitude),
+										}}
+										icon={{
+											url: "/frontal-taxi-cab.svg",
+											scaledSize: new window.google.maps.Size(20, 20),
+											origin: new window.google.maps.Point(0, 0),
+											anchor: new window.google.maps.Point(10, 10),
+										}}
+										onClick={(e) => handleMarkerClick(driver)}
+									/>
+									{selectedDriver ? (
+										<InfoWindow
+											position={{
+												lat: selectedDriver?.location?._latitude,
+												lng: selectedDriver?.location?._longitude,
+											}}
+											visible={true}
+											onCloseClick={setSelectedDriver(null)}
+										>
+											{console.log(
+												"selected here",
+												typeof selectedDriver.location._latitude
+											)}
+											<div>
+												<h2>{`${selectedDriver.fname} ${selectedDriver.lname}`}</h2>
+												<p>Status: {selectedDriver.status}</p>
+											</div>
+										</InfoWindow>
+									) : null}
+								</>
 							);
 					})}
 					{rider ? (
@@ -334,20 +350,6 @@ function MapContainer() {
 								anchor: new window.google.maps.Point(15, 15),
 							}}
 						/>
-					) : null}
-					{selectedDriver ? (
-						<InfoWindow
-							position={{
-								lat: selectedDriver.location._latitude,
-								lng: selectedDriver.location._longitude,
-							}}
-							onCloseClick={setSelectedDriver(null)}
-						>
-							<div>
-								<h2>{`${selectedDriver.fname} ${selectedDriver.lname}`}</h2>
-								<p>Status: {selectedDriver.status}</p>
-							</div>
-						</InfoWindow>
 					) : null}
 
 					{nearestDriver ? (
@@ -377,10 +379,10 @@ function MapContainer() {
 					)}
 					{open ? (
 						<div className="dispatchForm">
-							<h1>Dispach a ride request </h1>
+							<h1> Dispatch a Ride Request</h1>
 							<div className="dispatchTitle forSearch">
 								You can dispatch a request by filling in the required info and
-								click dispatch Dispatch a Ride Request
+								click dispatch
 							</div>
 							<div className="inputField">
 								<Grid item xs={12}>
@@ -430,8 +432,22 @@ function MapContainer() {
 									</TextField>
 								</Grid>
 							</div>
-							<div className="inputField">
-								<SearchDestination setDestination={setDestination} />
+							<div className="inputGroup">
+								<div className="destLabel">From:</div>
+								<div className="destInput">
+									<SearchLocation
+										setLocation={setRider}
+										panTo={panTo}
+										forceUpdate={forceUpdate}
+										currentLocation={rider.name}
+									/>
+								</div>
+							</div>
+							<div className="inputGroup" style={{ marginTop: "12px " }}>
+								<div className="destLabel">To:</div>
+								<div className="destInput">
+									<SearchLocation setLocation={setDestination} />
+								</div>
 							</div>
 							<div className="inputField">
 								<TextField
@@ -551,9 +567,7 @@ function MapContainer() {
 									{!sameDestination ? (
 										<div className="inputField">
 											<Grid item xs={12}>
-												<SearchDestination
-													setDestination={setOtherDestination}
-												/>
+												<SearchLocation setDestination={setOtherDestination} />
 												<IconButton>
 													<AddIcon onClick={addDestination} />
 												</IconButton>
@@ -590,99 +604,5 @@ function MapContainer() {
 		</div>
 	);
 }
-
-const SearchPickUpLocation = ({ panTo, setRider, forceUpdate }) => {
-	const { ready, value, suggestions, setValue, clearSuggestions } =
-		usePlacesAutocomplete({
-			requestOptions: {
-				location: { lat: () => -1.9397, lng: () => 30.0557 },
-				radius: 200 * 1000,
-			},
-		});
-
-	return (
-		<div className="search">
-			<Combobox
-				onSelect={async (address) => {
-					setValue(address, false);
-					clearSuggestions();
-
-					try {
-						const results = await getGeocode({ address });
-						const name = results[0].formatted_address;
-						const { lat, lng } = await getLatLng(results[0]);
-						const location = { lat, lng };
-						panTo({ lat, lng });
-						setRider({ name, location });
-						forceUpdate();
-					} catch (error) {
-						console.log(error);
-					}
-				}}
-			>
-				<ComboboxInput
-					className="searchInput"
-					value={value}
-					onChange={(e) => setValue(e.target.value)}
-					disabled={!ready}
-					placeholder={"Enter an address"}
-					autoComplete
-				/>
-				<ComboboxPopover>
-					{suggestions.status === "OK" &&
-						suggestions.data.map(({ id, description }) => (
-							<ComboboxOption key={id} value={description} />
-						))}
-				</ComboboxPopover>
-			</Combobox>
-		</div>
-	);
-};
-
-const SearchDestination = ({ setDestination }) => {
-	const { ready, value, suggestions, setValue, clearSuggestions } =
-		usePlacesAutocomplete({
-			requestOptions: {
-				location: { lat: () => -1.9397, lng: () => 30.0557 },
-				radius: 200 * 1000,
-			},
-		});
-
-	return (
-		<div className="searchDestination">
-			<Combobox
-				onSelect={async (address) => {
-					setValue(address, false);
-					clearSuggestions();
-
-					try {
-						const results = await getGeocode({ address });
-						const name = results[0].formatted_address;
-						const { lat, lng } = await getLatLng(results[0]);
-						const location = { lat, lng };
-						setDestination({ name, location });
-					} catch (error) {
-						console.log(error);
-					}
-				}}
-			>
-				<ComboboxInput
-					className="searchInput2"
-					value={value}
-					onChange={(e) => setValue(e.target.value)}
-					disabled={!ready}
-					placeholder={"Enter an address"}
-					autoComplete
-				/>
-				<ComboboxPopover className="searchPopover">
-					{suggestions.status === "OK" &&
-						suggestions.data.map(({ id, description }) => (
-							<ComboboxOption key={id} value={description} />
-						))}
-				</ComboboxPopover>
-			</Combobox>
-		</div>
-	);
-};
 
 export default MapContainer;

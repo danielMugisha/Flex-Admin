@@ -54,7 +54,7 @@ const DriverList = () => {
 				return (
 					<>
 						<Link to={"/driver/" + params.row.id}>
-							<button className="userListEdit">Edit</button>
+							<button className="userListEdit">View</button>
 						</Link>
 						<DeleteOutline
 							className="userListDelete"
@@ -83,10 +83,8 @@ const DriverList = () => {
 					pageSize={8}
 					checkboxSelection
 				/>
-			</div>
-			<div className="userTitleContainer">
 				<Link to="/newDriver">
-					<button className="userAddButton">Create</button>
+					<button className="driverAddButton">Register a new Driver</button>
 				</Link>
 			</div>
 		</>

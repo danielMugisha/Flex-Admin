@@ -10,7 +10,7 @@ import IconButton from "@material-ui/core/IconButton";
 import PhotoCamera from "@material-ui/icons/PhotoCamera";
 import AttachmentIcon from "@material-ui/icons/Attachment";
 import "./newCar.css";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Redirect } from "react-router";
@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const serviceCategories = ["PICK ME UP", "VIP", "CARGO"];
-const URL = "https://flexgo-backend.herokuapp.com/api/car/add";
+const URL = `${process.env.REACT_APP_API}/car/add`;
 
 export default function NewCar() {
 	const user = useSelector((state) => state.firebase.auth);
@@ -71,13 +71,13 @@ export default function NewCar() {
 
 	const handleFileUpload = (e) => {
 		const { id, files } = e.target;
-		if (id == "uploadFile") {
+		if (id === "uploadFile") {
 			documents.push(files[0]);
 			setCar({
 				...car,
 				docs: documents,
 			});
-		} else if (id == "uploadImage") {
+		} else if (id === "uploadImage") {
 			imgs.push(files[0]);
 			setCar({
 				...car,
@@ -112,7 +112,7 @@ export default function NewCar() {
 	};
 
 	useEffect(() => {
-		const subs = categories.filter((c) => c.categoryName == car.category);
+		const subs = categories.filter((c) => c.categoryName === car.category);
 		if (subs.length > 0) setSubCategories(subs[0].subCategories);
 	}, [car.category]);
 

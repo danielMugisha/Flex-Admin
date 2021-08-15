@@ -2,10 +2,7 @@ import "./riderList.css";
 import { DataGrid } from "@material-ui/data-grid";
 import { DeleteOutline } from "@material-ui/icons";
 import { Link, Redirect } from "react-router-dom";
-import { useEffect } from "react";
-import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
-import { setRiders } from "../../store/actions/riderActions";
+import { useSelector } from "react-redux";
 
 const RiderList = () => {
 	const user = useSelector((state) => state.firebase.auth);
