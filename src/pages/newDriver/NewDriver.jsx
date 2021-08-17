@@ -14,6 +14,12 @@ import { useSelector } from "react-redux";
 import { useState, useEffect, useCallback } from "react";
 import { Redirect } from "react-router";
 import axios from "axios";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Slide from "@material-ui/core/Slide";
 const admin = require("firebase-admin");
 
 const useStyles = makeStyles((theme) => ({
@@ -34,16 +40,18 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+	return <Slide direction="up" ref={ref} {...props} />;
+});
+
 const accountTypes = ["I AM A CAR OWNER", "I AM A DRIVER", "I DRIVE MY CAR"];
-const URL = `http://localhost:8080/api/driver/register`;
+const URL = `${process.env.REACT_APP_API}/driver/register`;
 
 export default function NewDriver() {
 	const user = useSelector((state) => state.firebase.auth);
 
-	const drivers = useSelector((state) => state.allDrivers.drivers);
-	const categories = useSelector((state) => state.allCategories.categories);
 	const classes = useStyles();
-	const [subCategories, setSubCategories] = useState("");
+	const [open, setOpen] = useState(false);
 
 	const [lat, setLat] = useState(-1.9495199270072534);
 	const [long, setLong] = useState(30.124528673106347);
@@ -61,8 +69,8 @@ export default function NewDriver() {
 		gender: "",
 		bdate: "",
 		password: "",
-		docs: [],
-		images: [],
+		docs: "",
+		images: "",
 		status: "online",
 		location: location,
 	});
@@ -79,40 +87,45 @@ export default function NewDriver() {
 		});
 	};
 
-	const [, updateState] = useState();
-	const forceUpdate = useCallback(() => updateState({}), []);
-
 	const handleFileUpload = (e) => {
 		const { id, files } = e.target;
 		if (id === "uploadFile") {
 			setDoc(files[0]);
 			setDriver({
 				...driver,
-				docs: doc,
+				docs: { name: files[0].name, type: files[0].type },
 			});
 		} else if (id == "uploadImage") {
 			setImg(files[0]);
 			setDriver({
 				...driver,
-				images: img,
+				images: { name: files[0].name, type: files[0].type },
 			});
 		}
 	};
 
+	const handleClose = () => {
+		setOpen(false);
+	};
+
 	const handleSubmit = () => {
 		console.log("submit driver", driver);
+
+		const data = new FormData();
+
+		data.append("driver", JSON.stringify(driver));
+		data.append("doc", doc);
+		data.append("image", img);
 		try {
 			axios({
 				method: "post",
 				url: URL,
-				data: driver,
+				data: data,
 				headers: { "Content-Type": "multipart/form-data" },
 			})
 				.then(function (response) {
-					//handle success
 					console.log(response);
-					// document.getElementById("myForm").reset();
-					// window.alert("car added");
+					setOpen(true);
 				})
 				.catch(function (response) {
 					//handle error
@@ -305,10 +318,32 @@ export default function NewDriver() {
 						variant="contained"
 						color="primary"
 						onClick={handleSubmit}
-						className="submitButton"
+						className={classes.formControl}
 					>
 						Add Driver
 					</Button>
+					<Dialog
+						open={open}
+						TransitionComponent={Transition}
+						keepMounted
+						onClose={handleClose}
+						aria-labelledby="alert-dialog-slide-title"
+						aria-describedby="alert-dialog-slide-description"
+					>
+						<DialogTitle id="alert-dialog-slide-title">
+							{"Action Completed"}
+						</DialogTitle>
+						<DialogContent>
+							<DialogContentText id="alert-dialog-slide-description">
+								Driver Created successfully!
+							</DialogContentText>
+						</DialogContent>
+						<DialogActions>
+							<Button onClick={handleClose} color="primary">
+								Close
+							</Button>
+						</DialogActions>
+					</Dialog>
 				</div>
 			</div>
 		</div>

@@ -10,6 +10,6 @@
 }
 
 .submitButton {
-	width: 97%;
-	margin: 12px;
+	margin: auto;
+	align-self: center;
 }

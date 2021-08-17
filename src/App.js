@@ -14,6 +14,7 @@ import Login from "./pages/login/Login";
 import HelpDesk from "./pages/helpDesk/home/HelpDesk";
 import Driver from "./pages/driver/Driver";
 import NewDriver from "./pages/newDriver/NewDriver";
+import Rider from "./pages/rider/Rider";
 
 function App() {
 	return (
@@ -46,6 +47,9 @@ function App() {
 							</Route>
 							<Route path="/driver/:driverId">
 								<Driver />
+							</Route>
+							<Route path="/rider/:riderId">
+								<Rider />
 							</Route>
 							<Route path="/product/:productId">
 								<Product />

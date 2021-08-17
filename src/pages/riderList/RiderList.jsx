@@ -55,8 +55,8 @@ const RiderList = () => {
 			renderCell: (params) => {
 				return (
 					<>
-						<Link to={"/user/" + params.row.id}>
-							<button className="userListEdit">Edit</button>
+						<Link to={"/rider/" + params.row.id}>
+							<button className="userListEdit">View</button>
 						</Link>
 						<DeleteOutline
 							className="userListDelete"
@@ -72,7 +72,7 @@ const RiderList = () => {
 	if (!user.uid) return <Redirect to="login" />;
 	return (
 		<div className="userList">
-			<h1 className="driversTitle">Riders</h1>
+			<h1 className="driversTitle">Customers</h1>
 			<DataGrid
 				rows={data}
 				disableSelectionOnClick

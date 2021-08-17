@@ -3,6 +3,7 @@ import { combineReducers } from "redux";
 import { riderReducer } from "./riderReducer";
 import { categoriesReducer } from "./categoriesReducer";
 import { carReducer } from "./carReducer";
+import { requestReducer } from "./requestReducer";
 import { firebaseReducer } from "react-redux-firebase";
 import authReducer from "./authReducer";
 
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
 	allRiders: riderReducer,
 	allCategories: categoriesReducer,
 	allCars: carReducer,
+	allRequests: requestReducer,
 	auth: authReducer,
 	firebase: firebaseReducer,
 });

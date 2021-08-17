@@ -52,7 +52,7 @@ export default function NewCar() {
 		comments: "",
 		docs: [],
 		images: [],
-		owner: "",
+		pNumber: "",
 	};
 
 	var documents = [];
@@ -97,7 +97,6 @@ export default function NewCar() {
 				.then(function (response) {
 					//handle success
 					console.log(response);
-					document.getElementById("myForm").reset();
 					window.alert("car added");
 				})
 				.catch(function (response) {
@@ -203,30 +202,19 @@ export default function NewCar() {
 							})}
 						</Select>
 					</FormControl>
-					<FormControl variant="outlined" className={classes.formControl}>
-						<InputLabel id="demo-simple-select-outlined-label">
-							Ownwer
-						</InputLabel>
-						<Select
-							labelId="demo-simple-select-outlined-label"
-							id="demo-simple-select-outlined"
-							onChange={handleChange}
-							value={car.owner}
-							name="owner"
-							label="owner"
-						>
-							<MenuItem value="Flex">
-								<em>Flex</em>
-							</MenuItem>
-							{drivers.map((d) => {
-								return (
-									<MenuItem
-										value={`${d.lname} ${d.fname}`}
-									>{`${d.lname} ${d.fname}`}</MenuItem>
-								);
-							})}
-						</Select>
-					</FormControl>
+					<TextField
+						className={classes.formControl}
+						labelId="demo-simple-select-outlined-label"
+						id="filled-number"
+						label="Plate Number"
+						type="text"
+						name="pNumber"
+						onChange={handleChange}
+						InputLabelProps={{
+							shrink: true,
+						}}
+						variant="outlined"
+					/>
 
 					<TextField
 						className={classes.formControl}

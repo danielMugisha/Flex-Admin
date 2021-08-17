@@ -15,12 +15,14 @@ import { setCategories } from "../../store/actions/categoryActions";
 import { setRiders } from "../../store/actions/riderActions";
 import { setCars } from "../../store/actions/carsActions";
 import { signOut } from "../../store/actions/authActions";
+import { setRequests } from "../../store/actions/requestsActions";
 
 export default function Sidebar() {
 	const DRIVERS_URL = `${process.env.REACT_APP_API}/drivers`;
 	const CATS_URL = `${process.env.REACT_APP_API}/car/categories`;
 	const CARS_URL = `${process.env.REACT_APP_API}/cars`;
 	const RIDERS_URL = `${process.env.REACT_APP_API}/riders`;
+	const REQUESTS_URL = `${process.env.REACT_APP_API}/rideRequests`;
 	const state = useSelector((state) => state);
 	const user = state.firebase.auth;
 	const profile = state.firebase.profile;
@@ -55,6 +57,13 @@ export default function Sidebar() {
 		dispatch(setCars(response.data));
 	};
 
+	const fetchRequests = async () => {
+		const response = await axios.get(REQUESTS_URL).catch((err) => {
+			console.log(err);
+		});
+		dispatch(setRequests(response.data));
+	};
+
 	const handleLogout = () => {
 		dispatch(signOut());
 	};
@@ -64,6 +73,7 @@ export default function Sidebar() {
 		fetchCategories();
 		fetchRiders();
 		fetchCars();
+		fetchRequests();
 	}, []);
 
 	return (
