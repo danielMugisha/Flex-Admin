@@ -1,4 +1,4 @@
-import "./driverList.css";
+import "./usersList.css";
 import { DataGrid } from "@material-ui/data-grid";
 import { DeleteOutline } from "@material-ui/icons";
 import { Link, Redirect } from "react-router-dom";
@@ -7,9 +7,9 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setDrivers } from "../../store/actions/driverActions";
 
-const DriverList = () => {
+const UsersList = () => {
 	const user = useSelector((state) => state.firebase.auth);
-	const data = useSelector((state) => state.allDrivers.drivers);
+	const data = useSelector((state) => state.allUsers.users);
 
 	//console.log(data[0].serverTimestamp());
 
@@ -20,33 +20,21 @@ const DriverList = () => {
 	const columns = [
 		{ field: "uid", headerName: "ID", width: 90, align: "right" },
 		{
-			field: "user",
-			headerName: "User",
+			field: "firstName",
+			headerName: "First Name",
 			width: 200,
-			renderCell: (params) => {
-				return (
-					<div className="userListUser">
-						<div className="userListImg">
-							{params.row.fname[0]}
-							{params.row.lname[0]}
-						</div>
-						{params.row.fname} {params.row.lname}
-					</div>
-				);
-			},
 			sortable: false,
 		},
-		{ field: "email", headerName: "Email", width: 200, sortable: false },
 		{
-			field: "status",
-			headerName: "Status",
-			width: 120,
+			field: "lastName",
+			headerName: "Last Name",
+			width: 200,
+			sortable: false,
 		},
 		{
-			field: "address",
-			headerName: "Address",
+			field: "role",
+			headerName: "Role",
 			width: 120,
-			sortable: false,
 		},
 		{
 			field: "action",
@@ -76,7 +64,7 @@ const DriverList = () => {
 	return (
 		<>
 			<div className="userList">
-				<h1 className="driversTitle">Drivers</h1>
+				<h1 className="driversTitle">Users</h1>
 				<DataGrid
 					autoHeight
 					rows={data}
@@ -85,12 +73,12 @@ const DriverList = () => {
 					pageSize={8}
 					checkboxSelection
 				/>
-				<Link to="/newDriver">
-					<button className="driverAddButton">Register a new Driver</button>
+				<Link>
+					<button className="driverAddButton">Register a new user</button>
 				</Link>
 			</div>
 		</>
 	);
 };
 
-export default DriverList;
+export default UsersList;

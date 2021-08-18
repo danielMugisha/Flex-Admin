@@ -15,6 +15,8 @@ import HelpDesk from "./pages/helpDesk/home/HelpDesk";
 import Driver from "./pages/driver/Driver";
 import NewDriver from "./pages/newDriver/NewDriver";
 import Rider from "./pages/rider/Rider";
+import UsersList from "./pages/dispatchers/UsersList";
+import RequestList from "./pages/requests/RequestList";
 
 function App() {
 	return (
@@ -44,6 +46,12 @@ function App() {
 							</Route>
 							<Route path="/riders">
 								<RiderList />
+							</Route>
+							<Route path="/users">
+								<UsersList />
+							</Route>
+							<Route path="/requests">
+								<RequestList />
 							</Route>
 							<Route path="/driver/:driverId">
 								<Driver />

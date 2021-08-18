@@ -20,6 +20,8 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Slide from "@material-ui/core/Slide";
+import SearchLocation from "../../components/mapContainer/SearchLocation";
+import { useLoadScript } from "@react-google-maps/api";
 const admin = require("firebase-admin");
 
 const useStyles = makeStyles((theme) => ({
@@ -50,8 +52,15 @@ const URL = `${process.env.REACT_APP_API}/driver/register`;
 export default function NewDriver() {
 	const user = useSelector((state) => state.firebase.auth);
 
+	const { isLoaded, loadError } = useLoadScript({
+		googleMapsApiKey: `AIzaSyAJgkThrpvzmzSU7-7IYspebiELSdygtWk`,
+		libraries: ["places"],
+	});
+
 	const classes = useStyles();
 	const [open, setOpen] = useState(false);
+
+	const [address, setAddress] = useState({});
 
 	const [lat, setLat] = useState(-1.9495199270072534);
 	const [long, setLong] = useState(30.124528673106347);
@@ -69,14 +78,16 @@ export default function NewDriver() {
 		gender: "",
 		bdate: "",
 		password: "",
-		docs: "",
-		images: "",
+		docs: { ID: "", drivingLicence: "", criminalRecord: "" },
+		faceImage: "",
 		status: "online",
 		location: location,
 	});
 
-	const [doc, setDoc] = useState(null);
-	const [img, setImg] = useState(null);
+	const [Id, setId] = useState(null);
+	const [drivingLicence, setDrivingLicence] = useState(null);
+	const [criminalRecord, setCriminalRecord] = useState(null);
+	const [image, setImage] = useState(null);
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -87,21 +98,40 @@ export default function NewDriver() {
 		});
 	};
 
-	const handleFileUpload = (e) => {
-		const { id, files } = e.target;
-		if (id === "uploadFile") {
-			setDoc(files[0]);
-			setDriver({
-				...driver,
-				docs: { name: files[0].name, type: files[0].type },
-			});
-		} else if (id == "uploadImage") {
-			setImg(files[0]);
-			setDriver({
-				...driver,
-				images: { name: files[0].name, type: files[0].type },
-			});
-		}
+	const handleIdUpload = (e) => {
+		const file = e.target.files[0];
+		setId(file);
+		setDriver({
+			...driver,
+			docs: { ID: { name: file.name, type: file.type } },
+		});
+	};
+
+	const handleDrivingLicenceUpload = (e) => {
+		const file = e.target.files[0];
+		setDrivingLicence(file);
+		setDriver({
+			...driver,
+			docs: { drivingLicence: { name: file.name, type: file.type } },
+		});
+	};
+
+	const handleCriminalRecordUpload = (e) => {
+		const file = e.target.files[0];
+		setCriminalRecord(file);
+		setDriver({
+			...driver,
+			docs: { criminalRecord: { name: file.name, type: file.type } },
+		});
+	};
+
+	const handleImageUpload = (e) => {
+		const file = e.target.files[0];
+		setImage(file);
+		setDriver({
+			...driver,
+			faceImage: { name: file.name, type: file.type },
+		});
 	};
 
 	const handleClose = () => {
@@ -114,8 +144,10 @@ export default function NewDriver() {
 		const data = new FormData();
 
 		data.append("driver", JSON.stringify(driver));
-		data.append("doc", doc);
-		data.append("image", img);
+		data.append("nid", Id);
+		data.append("licence", drivingLicence);
+		data.append("record", criminalRecord);
+		data.append("image", image);
 		try {
 			axios({
 				method: "post",
@@ -138,7 +170,13 @@ export default function NewDriver() {
 		}
 	};
 
-	useEffect(() => {}, []);
+	useEffect(() => {
+		console.log("=====================================>", address);
+		setDriver({
+			...driver,
+			address: address,
+		});
+	}, [address]);
 
 	if (!user.uid) return <Redirect to="login" />;
 	return (
@@ -249,71 +287,113 @@ export default function NewDriver() {
 							label="Phone"
 						/>
 					</FormControl>
-					<FormControl variant="outlined" className={classes.formControl}>
-						<TextField
-							labelId="demo-simple-select-outlined-label"
-							id="filled-number"
-							type="text"
-							name="address"
-							value={driver.address}
-							onChange={handleChange}
-							variant="outlined"
-							label="Address"
-						/>
-					</FormControl>
-					<div className="fileUploadField">
-						<input
-							className={classes.input}
-							id="uploadFile"
-							type="file"
-							multiple
-							onChange={handleFileUpload}
-						/>
-						<label htmlFor="uploadFile">
-							Documents
-							<IconButton
-								color="primary"
-								aria-label="upload picture"
-								component="span"
-							>
-								<AttachmentIcon />
-							</IconButton>
-						</label>
+					<div className="inputGroup" style={{ margin: "8px " }}>
+						<div className="destLabel">Address:</div>
+						<div className="destInput">
+							<SearchLocation setLocation={setAddress} />
+						</div>
 					</div>
-					<div className={classes.formControl}>
-						{doc ? (
-							<p style={{ fontWeight: "bold", margin: "0 12px" }}>{doc.name}</p>
-						) : (
-							""
-						)}
+					<div className={`${classes.formControl} fileUpload`}>
+						<div>
+							<input
+								className={classes.input}
+								id="uploadId"
+								type="file"
+								multiple={false}
+								onChange={handleIdUpload}
+							/>
+							<label htmlFor="uploadId">
+								<IconButton
+									color="primary"
+									aria-label="upload picture"
+									component="span"
+								>
+									<AttachmentIcon />
+								</IconButton>
+								Attach ID / Passport
+							</label>
+						</div>
+						<div className="filename">{Id ? Id.name : "no file"}</div>
 					</div>
-					<div className="fileUploadField">
-						<input
-							className={classes.input}
-							id="uploadImage"
-							type="file"
-							accept={"image/*"}
-							multiple={false}
-							onChange={handleFileUpload}
-						/>
-						<label htmlFor="uploadImage">
-							Front Picture
-							<IconButton
-								color="primary"
-								aria-label="upload picture"
-								component="span"
-							>
-								<PhotoCamera />
-							</IconButton>
-						</label>
+					<div className={`${classes.formControl} fileUpload`}>
+						<div>
+							<input
+								className={classes.input}
+								id="uploadLicence"
+								type="file"
+								multiple={false}
+								onChange={handleDrivingLicenceUpload}
+							/>
+							<label htmlFor="uploadLicence">
+								<IconButton
+									color="primary"
+									aria-label="upload picture"
+									component="span"
+								>
+									<AttachmentIcon />
+								</IconButton>
+								Attach Driving Licence
+							</label>
+						</div>
+						<div className="filename">
+							{drivingLicence ? drivingLicence.name : "no file"}
+						</div>
 					</div>
-					<div className={classes.formControl}>
+					<div className={`${classes.formControl} fileUpload`}>
+						<div>
+							<input
+								className={classes.input}
+								id="uploadRecord"
+								type="file"
+								multiple={false}
+								onChange={handleCriminalRecordUpload}
+							/>
+							<label htmlFor="uploadRecord">
+								<IconButton
+									color="primary"
+									aria-label="upload picture"
+									component="span"
+								>
+									<AttachmentIcon />
+								</IconButton>
+								Attach Criminal Record
+							</label>
+						</div>
+						<div className="filename">
+							{criminalRecord ? criminalRecord.name : "no file"}
+						</div>
+					</div>
+
+					<div className={`${classes.formControl} fileUpload`}>
+						<div>
+							<input
+								className={classes.input}
+								id="uploadImage"
+								type="file"
+								accept={"image/*"}
+								multiple={false}
+								onChange={handleImageUpload}
+							/>
+							<label htmlFor="uploadImage">
+								<IconButton
+									color="primary"
+									aria-label="upload picture"
+									component="span"
+								>
+									<PhotoCamera />
+								</IconButton>
+								Face Picture
+							</label>
+						</div>
+						<div className="filename">{image ? image.name : "no file"}</div>
+					</div>
+					{/* <div className={classes.formControl}>
 						{img ? (
 							<p style={{ fontWeight: "bold", margin: "0 12px" }}>{img.name}</p>
 						) : (
 							""
 						)}
-					</div>
+					</div> */}
 					<Button
 						variant="contained"
 						color="primary"

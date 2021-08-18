@@ -1,4 +1,4 @@
-import "./driverList.css";
+import "./requestList.css";
 import { DataGrid } from "@material-ui/data-grid";
 import { DeleteOutline } from "@material-ui/icons";
 import { Link, Redirect } from "react-router-dom";
@@ -7,9 +7,9 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setDrivers } from "../../store/actions/driverActions";
 
-const DriverList = () => {
+const RequestList = () => {
 	const user = useSelector((state) => state.firebase.auth);
-	const data = useSelector((state) => state.allDrivers.drivers);
+	const data = useSelector((state) => state.allRequests.requests);
 
 	//console.log(data[0].serverTimestamp());
 
@@ -20,33 +20,48 @@ const DriverList = () => {
 	const columns = [
 		{ field: "uid", headerName: "ID", width: 90, align: "right" },
 		{
-			field: "user",
-			headerName: "User",
+			field: "riderId",
+			headerName: "Customer",
 			width: 200,
-			renderCell: (params) => {
-				return (
-					<div className="userListUser">
-						<div className="userListImg">
-							{params.row.fname[0]}
-							{params.row.lname[0]}
-						</div>
-						{params.row.fname} {params.row.lname}
-					</div>
-				);
-			},
-			sortable: false,
 		},
-		{ field: "email", headerName: "Email", width: 200, sortable: false },
+		{
+			field: "location",
+			headerName: "Pick Up Location",
+			width: 200,
+			valueGetter: (params) => {
+				console.log({ params });
+				let result = [];
+				if (params.row.location) {
+					if (params.row.location.name) {
+						result.push(params.row.location.name);
+					} else {
+						result.push(params.row.location);
+					}
+					return result;
+				}
+			},
+		},
+		{
+			field: "destination",
+			headerName: "Destination",
+			width: 200,
+			valueGetter: (params) => {
+				console.log({ params });
+				let result = [];
+				if (params.row.destination) {
+					if (params.row.destination.name) {
+						result.push(params.row.destination.name);
+					} else {
+						result.push(params.row.destination);
+					}
+					return result;
+				}
+			},
+		},
 		{
 			field: "status",
 			headerName: "Status",
-			width: 120,
-		},
-		{
-			field: "address",
-			headerName: "Address",
-			width: 120,
-			sortable: false,
+			width: 200,
 		},
 		{
 			field: "action",
@@ -76,7 +91,7 @@ const DriverList = () => {
 	return (
 		<>
 			<div className="userList">
-				<h1 className="driversTitle">Drivers</h1>
+				<h1 className="driversTitle">Requests</h1>
 				<DataGrid
 					autoHeight
 					rows={data}
@@ -85,12 +100,12 @@ const DriverList = () => {
 					pageSize={8}
 					checkboxSelection
 				/>
-				<Link to="/newDriver">
-					<button className="driverAddButton">Register a new Driver</button>
+				<Link>
+					<button className="driverAddButton">Register a new user</button>
 				</Link>
 			</div>
 		</>
 	);
 };
 
-export default DriverList;
+export default RequestList;

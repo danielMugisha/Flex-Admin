@@ -16,9 +16,13 @@ import { setRiders } from "../../store/actions/riderActions";
 import { setCars } from "../../store/actions/carsActions";
 import { signOut } from "../../store/actions/authActions";
 import { setRequests } from "../../store/actions/requestsActions";
+import { setUsers } from "../../store/actions/userActions";
+import { GiSteeringWheel } from "react-icons/gi";
+import { RiTaxiWifiFill } from "react-icons/ri";
 
 export default function Sidebar() {
 	const DRIVERS_URL = `${process.env.REACT_APP_API}/drivers`;
+	const USERS_URL = `${process.env.REACT_APP_API}/users`;
 	const CATS_URL = `${process.env.REACT_APP_API}/car/categories`;
 	const CARS_URL = `${process.env.REACT_APP_API}/cars`;
 	const RIDERS_URL = `${process.env.REACT_APP_API}/riders`;
@@ -28,6 +32,13 @@ export default function Sidebar() {
 	const profile = state.firebase.profile;
 
 	const dispatch = useDispatch();
+
+	const fetchUsers = async () => {
+		const response = await axios.get(USERS_URL).catch((err) => {
+			console.log(err);
+		});
+		dispatch(setUsers(response.data));
+	};
 
 	const fetchDrivers = async () => {
 		const response = await axios.get(DRIVERS_URL).catch((err) => {
@@ -74,6 +85,7 @@ export default function Sidebar() {
 		fetchRiders();
 		fetchCars();
 		fetchRequests();
+		fetchUsers();
 	}, []);
 
 	return (
@@ -97,7 +109,7 @@ export default function Sidebar() {
 							<ul className="sidebarList">
 								<Link to="/drivers" className="link">
 									<li className="sidebarListItem">
-										<PermIdentity className="sidebarIcon" />
+										<GiSteeringWheel className="sidebarIcon" />
 										Drivers
 									</li>
 								</Link>
@@ -107,19 +119,21 @@ export default function Sidebar() {
 										Customers
 									</li>
 								</Link>
-								<Link to="/" className="link">
+								<Link to="/users" className="link">
 									<li className="sidebarListItem">
 										<PermIdentity className="sidebarIcon" />
-										Dispatchers
+										Users
+									</li>
+								</Link>
+								<Link to="/requests" className="link">
+									<li className="sidebarListItem">
+										<RiTaxiWifiFill className="sidebarIcon" />
+										Trip Requests
 									</li>
 								</Link>
 								{/********************  to be made links ************************/}
 								<li className="sidebarListItem">
-									<AttachMoney className="sidebarIcon" />
-									Trip Requests
-								</li>
-								<li className="sidebarListItem">
-									<AttachMoney className="sidebarIcon" />
+									<RiTaxiWifiFill className="sidebarIcon" />
 									Trips
 								</li>
 								<li className="sidebarListItem">

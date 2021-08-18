@@ -13,3 +13,18 @@
 	margin: auto;
 	align-self: center;
 }
+
+.fileUpload {
+	border: 1px solid lightgrey;
+	color: grey;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.filename {
+	font-weight: bold;
+	margin: 0 12px;
+	float: left;
+	padding-left: 12px;
+}

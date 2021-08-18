@@ -12,7 +12,6 @@ const CarCategory = () => {
 	const user = useSelector((state) => state.firebase.auth);
 
 	const data = useSelector((state) => state.allCategories.categories);
-	console.log("datatttta", data);
 	// ADD CATEGORY START
 	const ADD_URL = `${process.env.REACT_APP_API}/car/category/add`;
 	const [subCategories, setSubCategories] = useState([]);
@@ -183,6 +182,7 @@ const CarCategory = () => {
 											type="text"
 											placeholder="Bus"
 											name="name"
+											className="addName"
 											onChange={handleChange}
 										/>
 									</div>
@@ -238,6 +238,7 @@ const CarCategory = () => {
 											type="text"
 											placeholder="Bus"
 											name="name"
+											className="addName"
 											placeholder={selectedCat.categoryName}
 											onChange={(e) => setNewName(e.target.value)}
 										/>

@@ -32,8 +32,8 @@ const SearchLocation = (props) => {
 					const name = results[0].formatted_address;
 					const { lat, lng } = await getLatLng(results[0]);
 					const location = { lat, lng };
-					props.panTo({ lat, lng });
 					props.setLocation({ name, location });
+					props.panTo({ lat, lng });
 					props.forceUpdate();
 				} catch (error) {
 					console.log(error);

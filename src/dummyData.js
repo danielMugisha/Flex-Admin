@@ -1,10 +1,13 @@
+import React from "react";
 import axios from "axios";
+import { useSelector } from "react-redux";
 const API_URL = `${process.env.REACT_APP_API}/drivers`;
 const API_BASE_URL = `${process.env.REACT_APP_URL}`;
 
-// window.onload = () => {
-//   getDrivers();
-// };
+const TreatData = () => {
+	const { drivers } = useSelector((state) => state);
+	return drivers;
+};
 
 export const driverData = [
 	{
