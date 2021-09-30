@@ -20,9 +20,67 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Slide from "@material-ui/core/Slide";
-import SearchLocation from "../../components/mapContainer/SearchLocation";
 import { useLoadScript } from "@react-google-maps/api";
+import {
+	Combobox,
+	ComboboxInput,
+	ComboboxPopover,
+	ComboboxOption,
+} from "@reach/combobox";
+import usePlacesAutocomplete, {
+	getGeocode,
+	getLatLng,
+} from "use-places-autocomplete";
+import "@reach/combobox/styles.css";
+import logo from "../../assets/img/logo1.png";
+import Box from "@mui/material/Box";
+import LinearProgress from "@mui/material/LinearProgress";
 const admin = require("firebase-admin");
+
+export const SearchLocation = (props) => {
+	const { ready, value, suggestions, setValue, clearSuggestions } =
+		usePlacesAutocomplete({
+			requestOptions: {
+				location: { lat: () => -1.9397, lng: () => 30.0557 },
+				radius: 200 * 1000,
+			},
+		});
+
+	return (
+		<Combobox
+			onSelect={async (address) => {
+				setValue(address, false);
+				clearSuggestions();
+
+				try {
+					const results = await getGeocode({ address });
+					const name = results[0].formatted_address;
+					const { lat, lng } = await getLatLng(results[0]);
+					const location = { lat, lng };
+					props.setLocation({ name, location });
+					props.panTo({ lat, lng });
+					props.forceUpdate();
+				} catch (error) {
+					console.log(error);
+				}
+			}}
+		>
+			<ComboboxInput
+				id="combo"
+				value={value ? value : props.currentLocation}
+				onChange={(e) => setValue(e.target.value)}
+				disabled={!ready}
+				placeholder={"Enter an address"}
+			/>
+			<ComboboxPopover className="comboList">
+				{suggestions.status === "OK" &&
+					suggestions.data.map(({ id, description }) => (
+						<ComboboxOption key={id} value={description} />
+					))}
+			</ComboboxPopover>
+		</Combobox>
+	);
+};
 
 const useStyles = makeStyles((theme) => ({
 	formControl: {
@@ -51,6 +109,7 @@ const URL = `${process.env.REACT_APP_API}/driver/register`;
 
 export default function NewDriver() {
 	const user = useSelector((state) => state.firebase.auth);
+	const [sending, setSending] = useState(false);
 
 	const { isLoaded, loadError } = useLoadScript({
 		googleMapsApiKey: `AIzaSyAJgkThrpvzmzSU7-7IYspebiELSdygtWk`,
@@ -139,8 +198,6 @@ export default function NewDriver() {
 	};
 
 	const handleSubmit = () => {
-		console.log("submit driver", driver);
-
 		const data = new FormData();
 
 		data.append("driver", JSON.stringify(driver));
@@ -148,6 +205,8 @@ export default function NewDriver() {
 		data.append("licence", drivingLicence);
 		data.append("record", criminalRecord);
 		data.append("image", image);
+		setOpen(true);
+		setSending(true);
 		try {
 			axios({
 				method: "post",
@@ -156,11 +215,13 @@ export default function NewDriver() {
 				headers: { "Content-Type": "multipart/form-data" },
 			})
 				.then(function (response) {
+					setSending(false);
 					console.log(response);
-					setOpen(true);
+					setSending(false);
 				})
 				.catch(function (response) {
 					//handle error
+					setSending(false);
 					console.log(response);
 					window.alert("something went wrong");
 				});
@@ -287,6 +348,9 @@ export default function NewDriver() {
 							label="Phone"
 						/>
 					</FormControl>
+					{/* <div className="search">
+						<SearchLocation setLocation={setAddress} />
+					</div> */}
 					<div className="inputGroup" style={{ margin: "8px " }}>
 						<div className="destLabel">Address:</div>
 						<div className="destInput">
@@ -387,13 +451,6 @@ export default function NewDriver() {
 						</div>
 						<div className="filename">{image ? image.name : "no file"}</div>
 					</div>
-					{/* <div className={classes.formControl}>
-						{img ? (
-							<p style={{ fontWeight: "bold", margin: "0 12px" }}>{img.name}</p>
-						) : (
-							""
-						)}
-					</div> */}
 					<Button
 						variant="contained"
 						color="primary"
@@ -405,24 +462,63 @@ export default function NewDriver() {
 					<Dialog
 						open={open}
 						TransitionComponent={Transition}
-						keepMounted
 						onClose={handleClose}
 						aria-labelledby="alert-dialog-slide-title"
 						aria-describedby="alert-dialog-slide-description"
+						fullWidth
+						maxWidth="sm"
 					>
-						<DialogTitle id="alert-dialog-slide-title">
-							{"Action Completed"}
-						</DialogTitle>
-						<DialogContent>
+						{!sending && (
+							<DialogTitle
+								id="alert-dialog-slide-title"
+								style={{ display: "flex", justifyContent: "center" }}
+							>
+								{"Action Completed"}
+							</DialogTitle>
+						)}
+						<DialogContent
+							style={{
+								height: "150px",
+								display: "flex",
+								justifyContent: "center",
+							}}
+						>
 							<DialogContentText id="alert-dialog-slide-description">
-								Driver Created successfully!
+								{sending ? (
+									<div
+										style={{
+											width: "100%",
+											height: "100%",
+											backgroundColor: "#0289b29f",
+											display: "flex",
+											justifyContent: "center",
+											alignItems: "center",
+											position: "absolute",
+											top: 0,
+											left: 0,
+										}}
+									>
+										<div>
+											<img className="logoBrand" src={logo} alt="logo" />
+											<Box sx={{ width: "100%" }}>
+												<LinearProgress />
+											</Box>
+										</div>
+									</div>
+								) : (
+									<div>Driver added successfully</div>
+								)}
 							</DialogContentText>
 						</DialogContent>
-						<DialogActions>
-							<Button onClick={handleClose} color="primary">
-								Close
-							</Button>
-						</DialogActions>
+						{!sending && (
+							<DialogActions
+								style={{ display: "flex", justifyContent: "center" }}
+							>
+								<Button onClick={handleClose} color="primary">
+									Close
+								</Button>
+							</DialogActions>
+						)}
 					</Dialog>
 				</div>
 			</div>

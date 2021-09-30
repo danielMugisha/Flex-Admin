@@ -19,7 +19,6 @@ const SearchLocation = (props) => {
 				radius: 200 * 1000,
 			},
 		});
-	console.log("props=============>", suggestions.data);
 
 	return (
 		<Combobox

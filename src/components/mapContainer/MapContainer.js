@@ -6,47 +6,22 @@ import {
 	Marker,
 	InfoWindow,
 } from "@react-google-maps/api";
-// import { formatRelative } from "date-fns";
 import mapStyles from "./mapStyles";
 import { useSelector } from "react-redux";
-import usePlacesAutocomplete, {
-	getGeocode,
-	getLatLng,
-} from "use-places-autocomplete";
-import {
-	Combobox,
-	ComboboxInput,
-	ComboboxPopover,
-	// ComboboxList,
-	ComboboxOption,
-} from "@reach/combobox";
 import "@reach/combobox/styles.css";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
 import {
 	TextField,
-	// Dialog,
 	Grid,
-	// DialogActions,
-	// DialogContent,
-	// DialogContentText,
-	// DialogTitle,
 	MenuItem,
 	Checkbox,
 	FormControlLabel,
 } from "@material-ui/core";
-
-// import Paper from "@material-ui/core/Paper";
-// import InputBase from "@material-ui/core/InputBase";
-// import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
-// import MenuIcon from "@material-ui/icons/Menu";
-// import SearchIcon from "@material-ui/icons/Search";
-// import DirectionsIcon from "@material-ui/icons/Directions";
 import AddIcon from "@material-ui/icons/Add";
 import SearchLocation from "./SearchLocation";
 
-//const libraries = ["places"];
 const mapContainerStyle = {
 	width: "100%",
 	height: "100vh",
@@ -64,6 +39,7 @@ const tripTypes = ["Single", "Multiple", "Rent"];
 
 function MapContainer() {
 	const { drivers } = useSelector((state) => state.allDrivers);
+	const { profile } = useSelector((state) => state.firebase);
 	const { isLoaded, loadError } = useLoadScript({
 		googleMapsApiKey: `AIzaSyAJgkThrpvzmzSU7-7IYspebiELSdygtWk`,
 		libraries: ["places"],
@@ -91,6 +67,7 @@ function MapContainer() {
 	const [destinations, setDestinations] = useState([]);
 	const [numberOfCoRiders, setNumberOfCoRiders] = useState(0);
 	const [coRiding, setCoRiding] = useState({});
+	const [customer, setCustomer] = useState("");
 
 	const [request, setRequest] = useState({
 		category: "",
@@ -100,6 +77,8 @@ function MapContainer() {
 		departureTime: "2017-05-24T10:30",
 		returnTrip: returnTrip,
 		coRiding: coRiding,
+		customer: customer,
+		dispatcher: `${profile.firstName} ${profile.lastName}`,
 	});
 
 	useEffect(() => {
@@ -185,8 +164,6 @@ function MapContainer() {
 	}, [nearestDriver]);
 
 	const handleSubmit = () => {
-		console.log("request here", request);
-
 		let headers = new Headers();
 
 		headers.append("Content-Type", "application/json");
@@ -280,24 +257,24 @@ function MapContainer() {
 										onClick={(e) => handleMarkerClick(driver)}
 									/>
 								);
-							else
-								return (
-									<Marker
-										value={driver}
-										key={driver.id}
-										position={{
-											lat: parseFloat(driver.location._latitude),
-											lng: parseFloat(driver.location._longitude),
-										}}
-										icon={{
-											url: "/frontal-taxi-cab.svg",
-											scaledSize: new window.google.maps.Size(20, 20),
-											origin: new window.google.maps.Point(0, 0),
-											anchor: new window.google.maps.Point(10, 10),
-										}}
-										onClick={(e) => handleMarkerClick(driver)}
-									/>
-								);
+							// else
+							// 	return (
+							// 		<Marker
+							// 			value={driver}
+							// 			key={driver.id}
+							// 			position={{
+							// 				lat: parseFloat(driver.location._latitude),
+							// 				lng: parseFloat(driver.location._longitude),
+							// 			}}
+							// 			icon={{
+							// 				url: "/frontal-taxi-cab.svg",
+							// 				scaledSize: new window.google.maps.Size(20, 20),
+							// 				origin: new window.google.maps.Point(0, 0),
+							// 				anchor: new window.google.maps.Point(10, 10),
+							// 			}}
+							// 			onClick={(e) => handleMarkerClick(driver)}
+							// 		/>
+							// 	);
 						} else
 							return (
 								<>
@@ -383,6 +360,21 @@ function MapContainer() {
 							<div className="dispatchTitle forSearch">
 								You can dispatch a request by filling in the required info and
 								click dispatch
+							</div>
+							<div className="inputField">
+								<TextField
+									value={request.customer}
+									name="customer"
+									fullWidth
+									variant="outlined"
+									onChange={handleChange}
+									id="datetime-local"
+									label="Customer"
+									type="text"
+									InputLabelProps={{
+										shrink: true,
+									}}
+								/>
 							</div>
 							<div className="inputField">
 								<Grid item xs={12}>

@@ -1,7 +1,8 @@
 .topbar {
 	width: 100%;
 	height: 70px;
-	background-color: #0289b2;
+	background-color: #54829c;
+	/* #0289b2; */
 	position: sticky;
 	top: 0;
 	z-index: 999;

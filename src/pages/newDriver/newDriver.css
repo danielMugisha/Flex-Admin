@@ -28,3 +28,12 @@
 	float: left;
 	padding-left: 12px;
 }
+
+.overlap {
+	width: 100%;
+	height: 100vh;
+	background-color: #0289b29f;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
